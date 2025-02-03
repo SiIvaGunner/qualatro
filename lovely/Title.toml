@@ -1,0 +1,72 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = -1
+
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = '''
+    local replace_card = Card(self.title_top.T.x, self.title_top.T.y, 1.2*G.CARD_W*SC_scale, 1.2*G.CARD_H*SC_scale, G.P_CARDS.S_A, G.P_CENTERS.c_base)
+'''
+position = "at"
+payload = '''
+    local replace_card = Card(self.title_top.T.x, self.title_top.T.y, 0.95*G.CARD_W*SC_scale, 0.95*G.CARD_H*SC_scale, G.P_CENTERS['j_qualatro_grand_dad'], G.P_CENTERS['j_qualatro_grand_dad'])
+'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = '''
+    SC = Card(G.ROOM.T.w/2 - SC_scale*G.CARD_W/2, 10. + G.ROOM.T.h/2 - SC_scale*G.CARD_H/2, SC_scale*G.CARD_W, SC_scale*G.CARD_H, G.P_CARDS.empty, G.P_CENTERS['j_joker'])
+'''
+position = "at"
+payload = '''
+SC = Card(G.ROOM.T.w/2 - SC_scale*G.CARD_W/2, 10. + G.ROOM.T.h/2 - SC_scale*G.CARD_H/2, SC_scale*G.CARD_W, SC_scale*G.CARD_H, G.P_CENTERS['j_qualatro_grand_dad'], G.P_CENTERS['j_qualatro_grand_dad'])
+'''
+match_indent = true
+
+
+[[patches]]
+[patches.pattern]
+target = "cardarea.lua"
+pattern = '''
+    if self.config.type == 'title' or (self.config.type == 'voucher' and #self.cards == 1) then
+        for k, card in ipairs(self.cards) do
+            if not card.states.drag.is then 
+                card.T.r = 0.2*(-#self.cards/2 - 0.5 + k)/(#self.cards)+ (G.SETTINGS.reduced_motion and 0 or 1)*0.02*math.sin(2*G.TIMERS.REAL+card.T.x)
+                local max_cards = math.max(#self.cards, self.config.temp_limit)
+                card.T.x = self.T.x + (self.T.w-self.card_w)*((k-1)/math.max(max_cards-1, 1) - 0.5*(#self.cards-max_cards)/math.max(max_cards-1, 1)) + 0.5*(self.card_w - card.T.w)
+                local highlight_height = G.HIGHLIGHT_H
+                if not card.highlighted then highlight_height = 0 end
+                card.T.y = self.T.y + self.T.h/2 - card.T.h/2 - highlight_height + (G.SETTINGS.reduced_motion and 0 or 1)*0.03*math.sin(0.666*G.TIMERS.REAL+card.T.x) + math.abs(0.5*(-#self.cards/2 + k-0.5)/(#self.cards))-(#self.cards>1 and 0.2 or 0)
+                card.T.x = card.T.x + card.shadow_parrallax.x/30
+            end
+        end
+        table.sort(self.cards, function (a, b) return a.T.x + a.T.w/2 < b.T.x + b.T.w/2 end)
+    end  
+'''
+position = "after"
+payload = '''
+    if self.config.type == 'title' and self == G.title_top then
+        for k, card in ipairs(self.cards) do
+            if card.states.drag.is then 
+				card.T.r = 0
+			end
+            if not card.states.drag.is then 
+				local targetPosX = 13.9
+				local targetPosY = 1.1
+				card.T.r = -0.15
+				card.T.r = card.T.r + 0.2*(k-1) + (G.SETTINGS.reduced_motion and 0 or 1)*0.02*math.sin(2*G.TIMERS.REAL+card.T.x)
+				card.T.x = targetPosX 
+				local highlight_height = G.HIGHLIGHT_H
+				if not card.highlighted then highlight_height = 0 end
+				card.T.y = targetPosY - highlight_height
+				card.T.y = card.T.y + (G.SETTINGS.reduced_motion and 0 or 1)*0.03*math.sin(0.666*G.TIMERS.REAL+card.T.x) + math.abs(0.5*(k-1))
+				card.T.x = card.T.x + card.shadow_parrallax.x/30
+            end
+        end
+    end  
+'''
+match_indent = true

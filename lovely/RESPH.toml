@@ -1,0 +1,21 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = -1
+
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = '''
+        if G.GAME.modifiers.all_eternal then
+            card:set_eternal(true)
+        end
+'''
+position = "after"
+payload = '''
+if G.GAME.modifiers.rental_old_jokers and not card.config.center.key:find('j_qualatro') then
+    card:set_rental(true)
+    card:set_perishable(true)
+end
+'''
+match_indent = true

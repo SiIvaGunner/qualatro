@@ -1,0 +1,17 @@
+{
+	"id": "Qualatro",
+	"name": "Qualatro",
+	"author": ["SiIvaGunner"],
+	"description": "",
+	"prefix": "qualatro",
+	"main_file": "Qualatro.lua",
+	"priority": 7,
+	"badge_colour": "C7638F",
+	"badge_text_colour": "FFFFFF",
+	"display_name": "Qualatro",
+	"version": "1.0.0",
+	"dependencies": [],
+	"conflicts": [],
+	"provides": [],
+	"dump_loc": false
+}

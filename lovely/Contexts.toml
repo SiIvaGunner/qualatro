@@ -1,0 +1,504 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = -1
+
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = "if not nosave_shop then G.E_MANAGER:add_event(Event({ func = function() save_run(); return true end})) end"
+position = "after"
+payload = '''
+SMODS.calculate_context({shop_loaded = true})
+'''
+match_indent = true
+
+# NOTE: (Ahmayk) Replace wheel of fortune message with WHAT
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = "text = localize('k_nope_ex'),"
+position = "at"
+payload = "text = localize('qua_what'),"
+match_indent = true
+
+# NOTE: (Ahmayk) Replace wheel of fortune sfx with WHAT
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = "play_sound('tarot2', 1, 0.4)"
+position = "at"
+payload = "play_sound('qualatro_WHAT', 1, 0.4)"
+match_indent = true
+
+
+# NOTE: (Ahmayk) Ta-Ta-Tax Fraud
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "if G.GAME.dollars >= 5 and not G.GAME.modifiers.no_interest then"
+position = "before"
+payload = '''
+local _,v = next(SMODS.find_card("j_qualatro_tax_fraud"))
+if v then
+    local max_interest = G.GAME.interest_cap/5
+    if G.GAME.modifiers.no_interest then
+        max_interest = 0
+    end
+    add_round_eval_row({bonus = true, name='interest_tax_fraud', dollars=max_interest, pitch = pitch})
+    pitch = pitch + 0.06
+    if not G.GAME.seeded and not G.GAME.challenge and not G.GAME.modifiers.no_interest then
+        G.PROFILES[G.SETTINGS.profile].career_stats.c_round_interest_cap_streak = G.PROFILES[G.SETTINGS.profile].career_stats.c_round_interest_cap_streak + 1
+    end
+    check_for_unlock({type = 'interest_streak'})
+    dollars = dollars + max_interest
+    goto tax_fraud_interest_skip
+end
+'''
+match_indent = true
+
+# NOTE: (Ahmayk) Skip over script instead of repalce since Cryptid's payload code card modifies the same interest handling code
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "add_round_eval_row({name = 'bottom', dollars = dollars})"
+position = "before"
+payload = '::tax_fraud_interest_skip::'
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = "elseif config.name == 'interest' then"
+position = "before"
+payload = '''
+elseif config.name == 'interest_tax_fraud' then
+    table.insert(left_text, {n=G.UIT.T, config={text = num_dollars, scale = 0.8*scale, colour = G.C.MONEY, shadow = true, juice = true}})
+    table.insert(left_text,{n=G.UIT.O, config={object = DynaText({string = {" "..localize{type = 'variable', key = "qua_tax_fraud", vars = {num_dollars}}}, colours = {HEX("93D468")}, shadow = true, pop_in = 0, scale = 0.4*scale, silent = true})}})
+'''
+match_indent = true
+
+# NOTE: (Ahmayk) New context.death for final goodbye
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = "if G.GAME.chips - G.GAME.blind.chips >= 0 or G.GAME.current_round.hands_left < 1 then"
+position = "before"
+payload = '''
+if (G.GAME.chips < G.GAME.blind.chips) and G.GAME.current_round.hands_left < 1 then
+    SMODS.calculate_context({full_hand = G.play.cards, death = true})
+end
+'''
+match_indent = true
+
+# NOTE: (Ahmayk) Reroll extra times for editions for tournament voucher 2 on contestant jokers
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = "local edition = poll_edition('edi'..(key_append or '')..G.GAME.round_resets.ante)"
+position = "after"
+payload = '''
+if
+    card.config.center.rarity == "qualatro_contestant" and
+    G.GAME.qualatro_contestant_edition_rate_multiplier and
+    G.GAME.qualatro_contestant_edition_rate_multiplier > 1
+then
+    for i = 1, G.GAME.qualatro_contestant_edition_rate_multiplier do
+        if edition and #edition > 1 then
+            break
+        end
+        edition = poll_edition('edi'..(key_append or '')..G.GAME.round_resets.ante)
+    end
+end
+'''
+match_indent = true
+
+# NOTE: (DDA) Popcorn explosion
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                            message = localize('k_eaten_ex'),
+                            colour = G.C.RED
+'''
+position = "at"
+payload = '''
+message = localize('k_eaten_ex'),
+colour = G.C.RED,
+func = function()
+    SMODS.calculate_context({popcorn_exploded = true})
+    return true
+end
+'''
+match_indent = true
+
+
+# NOTE: (DDA) Hook SMODS's functions to add custom CardArea (needs Lovely 7.1.0+ btw)
+[[patches]]
+[patches.pattern]
+target = '''=[SMODS _ "src/utils.lua"]'''
+pattern = '''-- TARGET: add your own CardAreas for playing card evaluation'''
+position = "after"
+payload = '''
+t[#t+1] = G.susie_cardarea
+'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = "local ret = {}"
+position = "after"
+payload = '''
+if context.cardarea == G.susie_cardarea then
+    context.cardarea = G.hand
+end
+'''
+match_indent = true
+
+# NOTE: (Ahmayk) New context.new_hand for dancing mad, triggers regardless if cards were drawn
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "if #SMODS.drawn_cards > 0 then"
+position = "before"
+payload = '''
+SMODS.calculate_context({new_hand = true})
+'''
+match_indent = true
+
+# NOTE: (Ahmayk) New context that adds other_joker_final_scoring_step for context.final_scoring_step (used in nobody's hero)
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "SMODS.calculate_context({full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands, final_scoring_step = true})"
+position = "after"
+payload = '''
+for _, area in ipairs(SMODS.get_card_areas('jokers')) do for _, _card in ipairs(area.cards) do
+	local effects = {}
+	for _, _area in ipairs(SMODS.get_card_areas('jokers')) do
+		for _, _joker in ipairs(_area.cards) do
+			local other_key = 'other_unknown'
+			if _card.ability.set == 'Joker' then other_key = 'other_joker_final_scoring_step' end
+			if _card.ability.consumeable then other_key = 'other_consumeable_final_scoring_step' end
+			if _card.ability.set == 'Voucher' then other_key = 'other_voucher_final_scoring_step' end
+			local joker_eval,post = eval_card(_joker, {full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands, [other_key] = _card, other_main = _card , final_scoring_step = true})
+			if next(joker_eval) then
+				if joker_eval.edition then joker_eval.edition = {} end
+				joker_eval.jokers.juice_card = _joker
+				table.insert(effects, joker_eval)
+				for _, v in ipairs(post) do effects[#effects+1] = v end
+				if joker_eval.retriggers then
+					for rt = 1, #joker_eval.retriggers do
+						local rt_eval, rt_post = eval_card(_joker, {full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands, [other_key] = _card, retrigger_joker = true, final_scoring_step = true})
+						table.insert(effects, {joker_eval.retriggers[rt]})
+						table.insert(effects, rt_eval)
+						for _, v in ipairs(rt_post) do effects[#effects+1] = v end
+					end
+				end
+			end
+		end
+	end
+	SMODS.trigger_effects(effects, _card)
+end end
+'''
+match_indent = true
+
+# NOTE: (Ahmayk) Add new table that tracks hand order during entire game (used in Polar Star)
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "G.GAME.last_hand_played = text"
+position = "after"
+payload = '''
+if not G.GAME.qualatro_hands_played_cache then
+	G.GAME.qualatro_hands_played_cache = {}
+end
+G.GAME.qualatro_hands_played_cache[G.GAME.hands_played] = text 
+'''
+match_indent = true
+
+# NOTE: (Ahmayk) Wario steals your payout
+[[patches]]
+[patches.pattern]
+target = "functions/button_callbacks.lua"
+pattern = '''
+    ease_dollars(G.GAME.current_round.dollars)
+'''
+position = "after"
+payload = '''
+local hasTalisman = next(SMODS.find_mod("Talisman"))
+if not hasTalisman then
+	function to_big(val) return val end
+	function to_number(val) return val end
+end
+local wario_cards = SMODS.find_card("j_qualatro_limited_liability_partnership")
+if #wario_cards then
+	local total_payout = to_big(G.GAME.current_round.dollars)
+	for i = 1, #wario_cards do
+		local amount = 0
+		if i == 1 then
+			amount = math.ceil(total_payout / 2)
+		elseif i == 2 then
+			amount = total_payout - math.ceil(total_payout / 2)
+		end
+		local wario_card = wario_cards[i]
+		if amount > to_big(0) then
+			G.E_MANAGER:add_event(Event({
+				trigger = 'after',
+				delay = 0.5,
+				func = function()
+					wario_card.ability.extra.stolen_money = wario_card.ability.extra.stolen_money + amount
+					card_eval_status_text(wario_card, 'dollars', -to_number(amount), nil, nil, {instant = true})
+					ease_dollars(-amount)
+					local sound_index = math.floor((pseudorandom("wario_sound") * 12) + 1)
+					local sound = "qualatro_wario"..sound_index
+					play_sound(sound, 1, 0.4)
+					return true
+				end
+			}), 'other')
+		else
+			G.E_MANAGER:add_event(Event({
+				trigger = 'after',
+				delay = 0.5,
+				func = function()
+					card_eval_status_text(wario_card, 'extra', nil, nil, nil, {message = localize('k_nope_ex')})
+					local sound_index = math.floor((pseudorandom("wario_sound_miss") * 8) + 1)
+					local sound = "qualatro_wario_miss"..sound_index
+					play_sound(sound, 1, 0.4)
+					return true
+				end
+			}), 'other')
+		end
+	end
+end
+'''
+match_indent = true
+
+# NOTE: (Ahmayk) New context.modify_playing_hand for joker inside your head 
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "local text,disp_text,poker_hands,scoring_hand,non_loc_disp_text = G.FUNCS.get_poker_hand_info(G.play.cards)"
+position = "before"
+payload = '''
+SMODS.calculate_context({modify_playing_hand = true, full_hand = G.play.cards})
+'''
+match_indent = true
+
+# even earlier
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "check_for_unlock({type = 'hand_contents', cards = G.play.cards})"
+position = "before"
+payload = '''
+local text,disp_text,poker_hands,scoring_hand,non_loc_disp_text = G.FUNCS.get_poker_hand_info(G.play.cards)
+SMODS.calculate_context({before_hand_evaluation = true, full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands})
+'''
+match_indent = true
+
+# prevent consumeable from being used
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+pattern = "e.config.ref_table:use_consumeable(area)"
+position = "at"
+payload = '''
+local jimmy = {}
+SMODS.calculate_context({qualatro_using_consumeable = true, consumeable = card, area = card.from_area}, jimmy)
+local timmy = SMODS.merge_effects(jimmy)
+if jimmy and timmy and timmy.jokers and timmy.jokers.dont_dissolve then
+	dont_dissolve = true
+	G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
+	if card.edition and card.edition.negative then
+	  G.GAME.consumeable_buffer = G.GAME.consumeable_buffer - 1
+	end
+	e.config.ref_table:use_consumeable(area)
+	G.E_MANAGER:add_event(Event({
+            trigger = 'before',
+            delay = 0.0,
+            func = function()
+						  if #G.consumeables.cards + G.GAME.consumeable_buffer - 1 < G.consumeables.config.card_limit then
+								draw_card(G.play, G.consumeables, 1, 'up', true, card, nil, mute)
+							else
+								dont_dissolve = false
+							end
+							G.GAME.consumeable_buffer = 0
+							return true
+						end}))
+else
+	e.config.ref_table:use_consumeable(area)
+end
+'''
+match_indent = true
+
+# check buffer when using priestess
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = "for i = 1, math.min((self.ability.consumeable.tarots or self.ability.consumeable.planets), G.consumeables.config.card_limit - #G.consumeables.cards) do"
+position = "at"
+payload = '''
+for i = 1, math.min((self.ability.consumeable.tarots or self.ability.consumeable.planets), G.consumeables.config.card_limit - #G.consumeables.cards - G.GAME.consumeable_buffer) do
+'''
+match_indent = true
+
+# check buffer when using hanged man
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = '''if self.ability.name == 'The Fool' then
+        G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()'''
+position = "at"
+payload = '''if self.ability.name == 'The Fool' then
+if G.consumeables.config.card_limit - #G.consumeables.cards - G.GAME.consumeable_buffer <= 0 then return end
+        G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()'''
+match_indent = true
+
+# NOTE: (Ahmayk) Ignore cost when stingy buys 
+[[patches]]
+[patches.pattern]
+target = "functions/button_callbacks.lua"
+pattern = '''
+inc_career_stat('c_shop_dollars_spent', c1.cost)
+if c1.cost ~= 0 then
+	ease_dollars(-c1.cost)
+end
+'''
+position = "at"
+payload = '''
+if not G.qualatro_active_stingy then
+	inc_career_stat('c_shop_dollars_spent', c1.cost)
+	if c1.cost ~= 0 then
+		ease_dollars(-c1.cost)
+	end
+end
+'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''if self.cost ~= 0 then'''
+position = "at"
+payload = '''if self.cost ~= 0 and not G.qualatro_active_stingy then'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''if self.cost > 0 then'''
+position = "at"
+payload = '''if self.cost > 0 and not G.qualatro_active_stingy then'''
+match_indent = true
+
+
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''play_sound('coin1')'''
+position = "at"
+payload = '''if not G.qualatro_active_stingy then play_sound('coin1') end'''
+match_indent = true
+
+# NOTE: (Ahmayk) Missingno Apologizes lol 
+# (btw non-obvious off by one error is intentional)
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = '''Jimbo = Card_Character(extra)'''
+position = "before"
+payload = '''
+	local missingnos = SMODS.find_card('j_qualatro_missingno')
+    if missingnos and #missingnos > 0 then
+		SMODS.destroy_cards(missingnos)
+		extra.center = 'j_qualatro_missingno'
+		quip = 'm_' .. math.floor(pseudorandom("missingnoquip") * 9) + 1
+	end
+'''
+match_indent = true
+
+# NOTE: (Ahmayk) 7 challenge gives 7 joker slots at ante 7 (in case it's changed) 
+# (btw non-obvious off by one error is intentional)
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''if G.GAME.modifiers.set_joker_slots_ante and (G.GAME.round_resets.ante == G.GAME.modifiers.set_joker_slots_ante) then'''
+position = "before"
+payload = '''
+if G.GAME.modifiers.qualatro_seven_challenge and (G.GAME.round_resets.ante == 7) then
+    G.jokers.config.card_limit = 7
+end
+'''
+match_indent = true
+
+# NOTE: (Ahmayk) Dancing mad everything is boss  (thanks cryptid!)
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = "self.GAME.round_resets.blind_choices.Boss = get_new_boss()"
+position = "before"
+payload = '''
+if G.GAME.modifiers.qualatro_dancing_mad then
+    self.GAME.round_resets.blind_choices.Small = get_new_boss()
+    self.GAME.round_resets.blind_choices.Big = get_new_boss()
+else
+    G.GAME.round_resets.blind_choices.Big = 'bl_big'
+end
+'''
+match_indent = true
+
+
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = "G.GAME.round_resets.blind_choices.Boss = get_new_boss()"
+position = "before"
+payload = '''
+if G.GAME.modifiers.qualatro_dancing_mad then
+    G.GAME.round_resets.blind_choices.Small = get_new_boss()
+    G.GAME.round_resets.blind_choices.Big = get_new_boss()
+else
+    G.GAME.round_resets.blind_choices.Big = 'bl_big'
+end
+'''
+match_indent = true
+
+# big blind doesn't increase ante
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "if G.GAME.blind:get_type() == 'Boss' then"
+position = "at"
+payload = "if G.GAME.blind_on_deck == 'Boss' then"
+match_indent = true
+
+# smaller showdown blinds don't win
+# Win on any ante above win_ante
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "if G.GAME.round_resets.ante == G.GAME.win_ante and G.GAME.blind:get_type() == 'Boss' then"
+position = "at"
+payload = "if G.GAME.round_resets.ante >= G.GAME.win_ante and G.GAME.blind_on_deck == 'Boss' then"
+match_indent = true
+
+
+# mark small blind as defeated
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "if G.GAME.round_resets.blind == G.P_BLINDS.bl_small then"
+position = "at"
+payload = "if G.GAME.blind_on_deck == 'Small' then"
+match_indent = true
+
+# mark big blind as defeated
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "elseif G.GAME.round_resets.blind == G.P_BLINDS.bl_big then"
+position = "at"
+payload = "elseif G.GAME.blind_on_deck == 'Big' then"
+match_indent = true

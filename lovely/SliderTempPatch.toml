@@ -1,0 +1,369 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = -1
+
+# Temporary card.lua "return nil, true" patches so that jokers properly "trigger"
+
+# Campfire
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                    SMODS.scale_card(self, {
+                        ref_table = self.ability,
+                        ref_value = "x_mult",
+                        scalar_value = "extra",
+                        message_colour = G.C.FILTER
+                    })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Flash Card
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+            if self.ability.name == 'Flash Card' and not context.blueprint then
+                SMODS.scale_card(self, {
+                    ref_table = self.ability,
+                    ref_value = "mult",
+                    scalar_value = "extra",
+                    message_key = 'a_mult',
+                    message_colour = G.C.RED
+                })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Canio
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                    SMODS.scale_card(self, {
+                        ref_table = self.ability,
+                        ref_value = 'caino_xmult',
+                        scalar_value = 'extra',
+                        operation = function(ref_table, ref_value, initial, change)
+                            ref_table[ref_value] = initial + face_cards*change
+                        end,
+                        message_key = 'a_xmult'
+                    })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Glass Joker
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                    G.E_MANAGER:add_event(Event({
+                        func = function()
+                    SMODS.scale_card(self, {
+                        ref_table = self.ability,
+                        ref_value = 'x_mult',
+                        scalar_value = 'extra',
+                        operation = function(ref_table, ref_value, initial, change)
+                            ref_table[ref_value] = initial + glass_cards*change
+                        end,
+                        message_key = 'a_xmult'
+                    })
+                    return true
+                        end
+                    }))
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Ramen
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                    SMODS.scale_card(self, {
+                        ref_table = self.ability,
+                        ref_value = "x_mult",
+                        scalar_value = "extra",
+                        operation = "-",
+                        message_key = 'a_xmult_minus',
+                        colour = G.C.RED
+                    })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Yorick
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                    SMODS.scale_card(self, {
+                        ref_table = self.ability,
+                        ref_value = "x_mult",
+                        scalar_table = self.ability.extra,
+                        scalar_value = "xmult",
+                        message_key = 'a_xmult',
+                        message_colour = G.C.RED
+                    })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Hit the Road
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                SMODS.scale_card(self, {
+                    ref_table = self.ability,
+                    ref_value = "x_mult",
+                    scalar_value = "extra",
+                    message_key = 'a_xmult',
+                    message_colour = G.C.RED
+                })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Green Joker
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                    SMODS.scale_card(self, {
+                        ref_table = self.ability,
+                        ref_value = "mult",
+                        scalar_table = self.ability.extra,
+                        scalar_value = "discard_sub",
+                        operation = function(ref_table, ref_value, initial, change)
+                            ref_table[ref_value] = math.max(0, initial - change)
+                        end,
+                        message_key = 'a_mult_minus',
+                        message_colour = G.C.RED
+                    })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Rocket
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                    SMODS.scale_card(self, {
+                        ref_table = self.ability.extra,
+                        ref_value = "dollars",
+                        scalar_value = "increase",
+                        message_colour = G.C.MONEY
+                    })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Turtle Bean
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                        SMODS.scale_card(self, {
+                            ref_table = self.ability.extra,
+                            ref_value = "h_size",
+                            scalar_value = "h_mod",
+                            message_key = 'a_handsize_minus',
+                            operation = function(ref_table, ref_value, initial, change)
+                                ref_table[ref_value] = initial - change
+                                G.hand:change_size(- change)
+                            end
+                        })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Popcorn
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                        SMODS.scale_card(self, {
+                            ref_table = self.ability,
+                            ref_value = "mult",
+                            scalar_value = "extra",
+                            message_key = 'a_mult_minus',
+                            colour = G.C.MULT,
+                            operation = '-'
+                        })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Egg
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                    SMODS.scale_card(self, {
+                        ref_table = self.ability,
+                        ref_value = "extra_value",
+                        scalar_value = "extra",
+                        scaling_message = {
+                            message = localize('k_val_up'),
+                            colour = G.C.MONEY
+                        }
+                    })
+                    self:set_cost()
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Wee Joker
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                        SMODS.scale_card(self, {
+                            ref_table = self.ability.extra,
+                            ref_value = "chips",
+                            scalar_value = "chip_mod",
+                            scaling_message = {
+                                extra = {focus = self, message = localize('k_upgrade_ex')},
+                                colour = G.C.CHIPS
+                            }
+                        })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Spare Trousers
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                        SMODS.scale_card(self, {
+                            ref_table = self.ability,
+                            ref_value = "mult",
+                            scalar_value = "extra",
+                            message_colour = G.C.RED
+                        })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Square Joker & Runner
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                        SMODS.scale_card(self, {
+                            ref_table = self.ability.extra,
+                            ref_value = "chips",
+                            scalar_value = "chip_mod",
+                        })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Vampire
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                            SMODS.scale_card(self, {
+                                ref_table = self.ability,
+                                ref_value = "x_mult",
+                                scalar_value = "extra",
+                                message_key = 'a_xmult',
+                                message_colour = G.C.MULT,
+                                operation = function(ref_table, ref_value, initial, scaling)
+                                    ref_table[ref_value] = initial + scaling*#enhanced
+                                end
+                            })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Ride the Bus
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                            SMODS.scale_card(self, {
+                                ref_table = self.ability,
+                                ref_value = "mult",
+                                scalar_value = "extra",
+                                no_message = true
+                            })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Obelisk
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                        else
+                            SMODS.scale_card(self, {
+                                ref_table = self.ability,
+                                ref_value = "x_mult",
+                                scalar_value = "extra",
+                                no_message = true
+                            })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Green Joker, again
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                        SMODS.scale_card(self, {
+                            ref_table = self.ability,
+                            ref_value = "mult",
+                            scalar_table = self.ability.extra,
+                            scalar_value = "hand_add"
+                        })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+# Ice Cream
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+                            SMODS.scale_card(self, {
+                                ref_table = self.ability.extra,
+                                ref_value = "chips",
+                                scalar_value = "chip_mod",
+                                operation = "-",
+                                message_key = 'a_chips_minus'
+                            })
+'''
+position = "after"
+payload = "return nil, true"
+match_indent = true
+
+

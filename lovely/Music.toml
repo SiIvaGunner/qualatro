@@ -1,0 +1,231 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = -1
+
+#NOTE: (Ahmayk) some debug stuff so we can print easily here
+[[patches]]
+[patches.pattern]
+target = "engine/sound_manager.lua"
+pattern = 'local sound_files = love.filesystem.getDirectoryItems("resources/sounds")'
+position = "after"
+payload = '''
+local debug_channel = love.thread.getChannel("debug")
+function inspect(table)
+    if type(table) == 'string' then
+        return table 
+	end
+    if type(table) == 'nil' then
+        return "literally nothing!" 
+	end
+    if type(table) ~= 'table' then
+        return "Not a table"
+    end
+    local str = ""
+    for k, v in pairs(table) do
+        local valueStr = type(v) == "table" and "table" or tostring(v)
+        str = str .. tostring(k) .. ": " .. valueStr .. "\n"
+    end
+    return str
+end
+''' 
+match_indent = true
+
+# NOTE: (Ahmayk) Disable removing stopped layered sounds in MODULATE() 
+[[patches]]
+[patches.pattern]
+target = "engine/sound_manager.lua"
+pattern = "if not v[i].sound:isPlaying() then"
+position = "at"
+payload = "if not v[i].sound:isPlaying() and not string.find(k, 'layer_') then"
+match_indent = true
+
+# NOTE: (Ahmayk) Custom fading behavior for layered sounds
+# sound volume control goes here
+[[patches]]
+[patches.pattern]
+target = "engine/sound_manager.lua"
+pattern = "if string.find(s.sound_code,'music') then"
+position = "at"
+payload = '''
+if string.find(s.sound_code,'layer_') then 
+	local should_be_playing = args.qualatro_active_music_layers and args.qualatro_active_music_layers[s.sound_code]
+	if should_be_playing then
+		s.current_volume = s.current_volume or 1
+		s.current_volume = 1*(args.dt*2) + (1-(args.dt*2))*s.current_volume
+	else
+		s.current_volume = s.current_volume or 0
+		s.current_volume = 0*(args.dt*1) + (1-(args.dt*1))*s.current_volume
+		if s.current_volume < 0.01 then
+			s.sound:stop()
+		end
+	end
+	s.sound:setVolume(s.current_volume*s.original_volume*(args.sound_settings.volume/100.0)*(args.sound_settings.music_volume/100.0))
+	s.sound:setPitch(s.original_pitch*args.pitch_mod)
+elseif string.find(s.sound_code,'music') then 
+''' 
+match_indent = true
+
+# NOTE: (Ahmayk) Refactor RESTART_MUSIC() and new functionality to handle processing layered music
+[[patches]]
+[patches.pattern]
+target = "engine/sound_manager.lua"
+pattern = '''
+  function RESTART_MUSIC(args)
+	for k, v in pairs(SOURCES) do
+		if string.find(k,'music') then 
+			for i, s in ipairs(v) do
+				s.sound:stop()
+			end
+			SOURCES[k] = {}
+			args.per = 0.7
+			args.vol = 0.6
+			args.sound_code = k
+			local s = PLAY_SOUND(args)
+			s.initialized = true
+		end
+	end
+  end
+
+''' 
+position = "at"
+payload = '''
+
+function load_music(s, args)
+	local should_stream = true 
+	local c = SMODS_Sounds[args.sound_code]
+	local s = c and
+	{sound = love.audio.newSource(love.sound.newDecoder(c.data), c.should_stream and 'stream' or 'static'), per = c.per, vol = c.vol } or
+	{sound = love.audio.newSource("resources/sounds/"..args.sound_code..'.ogg', should_stream and "stream" or 'static')}
+	table.insert(SOURCES[args.sound_code], s)
+	s.sound_code = args.sound_code
+	s.original_pitch = ((args.type ~= "sound") and s.per) or args.per or 1
+	s.original_volume = ((args.type ~= "sound") and s.vol) or args.vol or 1
+	s.created_on_pause = (args.overlay_menu and true or false)
+	s.created_on_state = args.state
+	s.sfx_handled = 0
+	s.transition_timer = 0
+	SET_SFX(s, args)
+	s.initialized = true
+	return s
+end
+
+function RESTART_MUSIC(args)
+
+	local sounds_to_play = {} 
+	for k, v in pairs(SOURCES) do
+		if string.find(k,'layer_') then 
+			if SOURCES[k] == nil or #SOURCES[k] == 0 then 
+				args.per = 1.0
+				args.vol = 0.6
+				args.sound_code = k
+				local s = load_music(s, args)
+			end
+
+			for i, s in ipairs(v) do
+				s.sound:stop()
+				local should_be_playing = args.qualatro_active_music_layers and args.qualatro_active_music_layers[k]
+				if should_be_playing then
+					--debug_channel:push("starting layered sound on music restart: " .. k)
+					sounds_to_play[#sounds_to_play + 1] = s.sound
+				end
+			end
+		end
+
+		if string.find(k,'music') then 
+			for i, s in ipairs(v) do
+				s.sound:stop()
+			end
+			SOURCES[k] = {}
+
+			args.per = 1.0
+			args.vol = 0.6
+			args.sound_code = k
+
+			SOURCES[args.sound_code] = SOURCES[args.sound_code] or {}
+
+			if #SOURCES[args.sound_code] == 0 then
+				local s = load_music(s, args)
+				sounds_to_play[#sounds_to_play + 1] = s.sound
+			else
+				for _, s in ipairs(SOURCES[args.sound_code]) do
+					if s.sound and not s.sound:isPlaying() then
+						s.original_pitch = args.per
+						s.original_volume = args.vol
+						s.created_on_pause = args.overlay_menu
+						s.created_on_state = args.state
+						s.sfx_handled = 0
+						s.transition_timer = 0
+						SET_SFX(s, args)
+						sounds_to_play[#sounds_to_play + 1] = s.sound
+					end
+				end
+			end
+		end
+	end
+
+	for k, v in pairs(sounds_to_play) do
+		love.audio.play(sounds_to_play)
+	end
+end
+
+function PROCESS_LAYERED_MUSIC(args)
+	local debug_string_concacted = ""
+    for k, v in pairs(SOURCES) do
+    	if string.find(k, 'layer_') then 
+			local should_be_playing = args.qualatro_active_music_layers and args.qualatro_active_music_layers[k]
+			if should_be_playing then
+				--NOTE: (Ahmayk) assumes that qualatro_music1 exists and is playing (should work even if volume is zero)
+				local sound_main_music = nil
+				if SOURCES['qualatro_music1'] ~= nil and SOURCES['qualatro_music1'][1] ~= nil then
+					sound_main_music = SOURCES['qualatro_music1'][1].sound
+				end
+				if sound_main_music and sound_main_music:isPlaying() then
+					for _, s in ipairs(v) do
+						if s.sound and not s.sound:isPlaying() then
+							local audio_position = sound_main_music:tell("seconds")
+							local layered_music_duration = s.sound:getDuration("seconds")
+							if audio_position < layered_music_duration then
+								--debug_channel:push("starting: " .. s.sound_code .. " at " .. audio_position)
+								s.sound:seek(audio_position , "seconds")
+								love.audio.play(s.sound)
+							end
+						end
+
+						--NOTE: (Ahmayk): outputs desync delta (leaving this in in case we want it later)
+						--if sound_main_music and s.sound then 
+							--local audio_position_music1 = sound_main_music:tell("seconds")
+							--local audio_position_layer = s.sound:tell("seconds")
+							--debug_string_concacted = debug_string_concacted .. k .. " DELTA: " .. audio_position_music1 - audio_position_layer .. "\n"
+						--end
+					end
+				else
+					for _, s in ipairs(v) do
+						if s.sound and s.sound:isPlaying() then
+							--debug_channel:push("stopping played sound because no qualatro_music1: " .. s.sound_code)
+							love.audio.stop(s.sound)
+						end
+					end
+				end
+			end
+			--NOTE: (Ahmayk) Stoping the audio is handled in MODULATE when layer is not active and volume is zero
+		end
+    end
+	if #debug_string_concacted > 0 then
+		debug_channel:push(debug_string_concacted)
+	end
+end
+'''
+match_indent = true
+
+
+[[patches]]
+[patches.pattern]
+target = "engine/sound_manager.lua"
+pattern ="elseif request.type == 'modulate' then"
+position = "before"
+payload = '''
+elseif request.type == 'process_layered_music' then
+	PROCESS_LAYERED_MUSIC(request)
+'''
+match_indent = true
