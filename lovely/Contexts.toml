@@ -17,9 +17,9 @@ match_indent = true
 [[patches]]
 [patches.pattern]
 target = "card.lua"
-pattern = "text = if not G.qualatro_resph_mode_loaded then localize('k_nope_ex') else localize('qua_what') end,"
+pattern = "text = localize('k_nope_ex'),"
 position = "at"
-payload = "text = localize('qua_what'),"
+payload = "text = localize((G.qualatro_resph_mode_loaded and 'k_nope_ex') or 'qua_what'),"
 match_indent = true
 
 # NOTE: (Ahmayk) Replace wheel of fortune sfx with WHAT
@@ -28,7 +28,7 @@ match_indent = true
 target = "card.lua"
 pattern = "play_sound('tarot2', 1, 0.4)"
 position = "at"
-payload = "if not G.qualatro_resph_mode_loaded then play_sound('qualatro_WHAT', 1, 0.4) else play_sound('tarot2', 1, 0.4) end"
+payload = "if G.qualatro_resph_mode_loaded then play_sound('tarot2', 1, 0.4) else play_sound('qualatro_WHAT', 1, 0.4) end"
 match_indent = true
 
 
