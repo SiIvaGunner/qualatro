@@ -7857,13 +7857,13 @@ function SMODS.calculate_individual_effect(effect, scored_card, key, amount, fro
 	--we do NOT count effects from editions, we only care if a joker's effect was triggered
 	pcall(function()
 		if type(amount) == "number" and not from_edition then
-			if effect.card and effect.card.ability.set == "Joker" then
+			if effect.card and effect.card.ability and effect.card.ability.set == "Joker" then
 				add_to_joker_results_table(effect.card.ID)
 			end
-			if effect.juice_card and effect.juice_card.ability.set == "Joker" then
+			if effect.juice_card and effect.juice_card.ability and effect.juice_card.ability.set == "Joker" then
 				add_to_joker_results_table(effect.juice_card.ID)
 			end
-			if scored_card and scored_card.ability.set == "Joker" then
+			if scored_card and scored_card.ability and scored_card.ability.set == "Joker" then
 				add_to_joker_results_table(scored_card.ID)
 			end
 		end
