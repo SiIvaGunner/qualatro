@@ -6222,7 +6222,7 @@ local function limited_liability_partnership()
 		blueprint_compat = false,
 		perishable_compat = false,
 		calculate = function(_, card, context)
-			if context.joker_main and card.ability.extra.stolen_money > to_big(0) then
+			if context.joker_main and to_big(card.ability.extra.stolen_money) > to_big(0) then
 				local xmult_total = 1 + card.ability.extra.xmult * card.ability.extra.stolen_money
 				return {
 					message = localize{type='variable',key='a_xmult',vars={xmult_total}},
