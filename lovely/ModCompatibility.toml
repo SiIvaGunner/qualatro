@@ -1,0 +1,28 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 5
+
+# Compatibility with Pokermon/Cryptid
+# NOTE: (Ahmayk) Ta-Ta-Tax Fraud
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = '''
+    local jirachis = find_joker('jirachi_banker')
+    for i = 1, #jirachis do
+      add_round_eval_row({bonus = true, name='joker_jirachi'..i, pitch = pitch, dollars = dollars, card = jirachis[i]})
+      dollars = dollars + dollars
+    end
+'''
+position = "at"
+payload = '''
+do
+  local jirachis = find_joker('jirachi_banker')
+  for i = 1, #jirachis do
+    add_round_eval_row({bonus = true, name='joker_jirachi'..i, pitch = pitch, dollars = dollars, card = jirachis[i]})
+    dollars = dollars + dollars
+  end
+end
+'''
+match_indent = true
