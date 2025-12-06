@@ -17,7 +17,7 @@ match_indent = true
 [[patches]]
 [patches.pattern]
 target = "card.lua"
-pattern = "text = localize('k_nope_ex'),"
+pattern = "text = if not G.qualatro_resph_mode_loaded then localize('k_nope_ex') else localize('qua_what') end,"
 position = "at"
 payload = "text = localize('qua_what'),"
 match_indent = true
@@ -28,7 +28,7 @@ match_indent = true
 target = "card.lua"
 pattern = "play_sound('tarot2', 1, 0.4)"
 position = "at"
-payload = "play_sound('qualatro_WHAT', 1, 0.4)"
+payload = "if not G.qualatro_resph_mode_loaded then play_sound('qualatro_WHAT', 1, 0.4) else play_sound('tarot2', 1, 0.4) end"
 match_indent = true
 
 
@@ -174,33 +174,36 @@ target = "functions/state_events.lua"
 pattern = "SMODS.calculate_context({full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands, final_scoring_step = true})"
 position = "after"
 payload = '''
-for _, area in ipairs(SMODS.get_card_areas('jokers')) do for _, _card in ipairs(area.cards) do
-	local effects = {}
-	for _, _area in ipairs(SMODS.get_card_areas('jokers')) do
-		for _, _joker in ipairs(_area.cards) do
-			local other_key = 'other_unknown'
-			if _card.ability.set == 'Joker' then other_key = 'other_joker_final_scoring_step' end
-			if _card.ability.consumeable then other_key = 'other_consumeable_final_scoring_step' end
-			if _card.ability.set == 'Voucher' then other_key = 'other_voucher_final_scoring_step' end
-			local joker_eval,post = eval_card(_joker, {full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands, [other_key] = _card, other_main = _card , final_scoring_step = true})
-			if next(joker_eval) then
-				if joker_eval.edition then joker_eval.edition = {} end
-				joker_eval.jokers.juice_card = _joker
-				table.insert(effects, joker_eval)
-				for _, v in ipairs(post) do effects[#effects+1] = v end
-				if joker_eval.retriggers then
-					for rt = 1, #joker_eval.retriggers do
-						local rt_eval, rt_post = eval_card(_joker, {full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands, [other_key] = _card, retrigger_joker = true, final_scoring_step = true})
-						table.insert(effects, {joker_eval.retriggers[rt]})
-						table.insert(effects, rt_eval)
-						for _, v in ipairs(rt_post) do effects[#effects+1] = v end
+if not G.qualatro_resph_mode_loaded then
+	for _, area in ipairs(SMODS.get_card_areas('jokers')) do for _, _card in ipairs(area.cards) do
+		local effects = {}
+		for _, _area in ipairs(SMODS.get_card_areas('jokers')) do
+			for _, _joker in ipairs(_area.cards) do
+				local other_key = 'other_unknown'
+				if _card.ability.set == 'Joker' then other_key = 'other_joker_final_scoring_step' end
+				if _card.ability.consumeable then other_key = 'other_consumeable_final_scoring_step' end
+				if _card.ability.set == 'Voucher' then other_key = 'other_voucher_final_scoring_step' end
+				local joker_eval,post = eval_card(_joker, {full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands, [other_key] = _card, other_main = _card , final_scoring_step = true})
+				if next(joker_eval) then
+					if joker_eval.edition then joker_eval.edition = {} end
+					joker_eval.jokers.juice_card = _joker
+					table.insert(effects, joker_eval)
+					for _, v in ipairs(post) do effects[#effects+1] = v end
+					if joker_eval.retriggers then
+						for rt = 1, #joker_eval.retriggers do
+							local rt_eval, rt_post = eval_card(_joker, {full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands, [other_key] = _card, retrigger_joker = true, final_scoring_step = true})
+							table.insert(effects, {joker_eval.retriggers[rt]})
+							table.insert(effects, rt_eval)
+							for _, v in ipairs(rt_post) do effects[#effects+1] = v end
+						end
 					end
 				end
 			end
 		end
+		SMODS.trigger_effects(effects, _card)
+		end
 	end
-	SMODS.trigger_effects(effects, _card)
-end end
+end
 '''
 match_indent = true
 
@@ -305,28 +308,32 @@ target = 'functions/button_callbacks.lua'
 pattern = "e.config.ref_table:use_consumeable(area)"
 position = "at"
 payload = '''
-local jimmy = {}
-SMODS.calculate_context({qualatro_using_consumeable = true, consumeable = card, area = card.from_area}, jimmy)
-local timmy = SMODS.merge_effects(jimmy)
-if jimmy and timmy and timmy.jokers and timmy.jokers.dont_dissolve then
-	dont_dissolve = true
-	G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
-	if card.edition and card.edition.negative then
-	  G.GAME.consumeable_buffer = G.GAME.consumeable_buffer - 1
+if not G.qualatro_resph_mode_loaded then
+	local jimmy = {}
+	SMODS.calculate_context({qualatro_using_consumeable = true, consumeable = card, area = card.from_area}, jimmy)
+	local timmy = SMODS.merge_effects(jimmy)
+	if jimmy and timmy and timmy.jokers and timmy.jokers.dont_dissolve then
+		dont_dissolve = true
+		G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
+		if card.edition and card.edition.negative then
+		  G.GAME.consumeable_buffer = G.GAME.consumeable_buffer - 1
+		end
+		e.config.ref_table:use_consumeable(area)
+		G.E_MANAGER:add_event(Event({
+				trigger = 'before',
+				delay = 0.0,
+				func = function()
+							  if #G.consumeables.cards + G.GAME.consumeable_buffer - 1 < G.consumeables.config.card_limit then
+									draw_card(G.play, G.consumeables, 1, 'up', true, card, nil, mute)
+								else
+									dont_dissolve = false
+								end
+								G.GAME.consumeable_buffer = 0
+								return true
+							end}))
+	else
+		e.config.ref_table:use_consumeable(area)
 	end
-	e.config.ref_table:use_consumeable(area)
-	G.E_MANAGER:add_event(Event({
-            trigger = 'before',
-            delay = 0.0,
-            func = function()
-						  if #G.consumeables.cards + G.GAME.consumeable_buffer - 1 < G.consumeables.config.card_limit then
-								draw_card(G.play, G.consumeables, 1, 'up', true, card, nil, mute)
-							else
-								dont_dissolve = false
-							end
-							G.GAME.consumeable_buffer = 0
-							return true
-						end}))
 else
 	e.config.ref_table:use_consumeable(area)
 end
