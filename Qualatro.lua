@@ -3713,9 +3713,11 @@ local function missingno()
 
 	local function random_colour(key)
 		local colour = pseudorandom_element(G.C, "missingno_colour_"..key)
-		while (type(colour[1]) ~= "number") do
-			colour = pseudorandom_element(G.C, "missingno_colour_"..key)
-		end
+		if not pcall(function()
+			while (type(colour[1]) ~= "number") do
+				colour = pseudorandom_element(G.C, "missingno_colour_"..key)
+			end
+		end) then colour = G.C.MONEY end
 		return colour
 	end
 
