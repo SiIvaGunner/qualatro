@@ -3750,7 +3750,7 @@ local function missingno()
 			for i = 1, 6 do
 				card.config.center.loc_txt.text_parsed[i] = nil
 				local random_desc = pseudorandom_element(G.localization.descriptions.Joker, "missingnoDesc")
-				if random_desc.text and random_desc.text[i] then
+				if random_desc.text and random_desc.text[i] and type(random_desc.text[i]) == "string" then
 					local parsed_string = loc_parse_string(random_desc.text[i])
 					if not parsed_string then break end
 					for _,v in pairs(parsed_string) do
