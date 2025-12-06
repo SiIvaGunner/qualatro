@@ -26,3 +26,16 @@ do
 end
 '''
 match_indent = true
+
+# Compatibility with JokerDisplay
+# Prevent crashing if attempting to move something without passing dt
+# Will mess up animations, but that's better than crashing
+[[patches]]
+[patches.pattern]
+target = "engine/moveable.lua"
+pattern = "function Moveable:move(dt)"
+position = "after"
+payload = '''
+    if dt == nil then dt = 0 end
+'''
+match_indent = true
