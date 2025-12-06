@@ -7838,12 +7838,25 @@ function Card:calculate_joker(context)
 		--NOTE: (Ahmayk) mark down repetitions and messages here
 		--we assume that if a joker sends a message, it has triggered (ie Mail-In-Rebate)
 		if scored_card.ability.set == "Joker" then
+			-- Compatibility with quantum card effects
+			local ID
+			if scored_card.quantum and scored_card.quantum.parent and scored_card.quantum.parent.ID then
+				ID = scored_card.quantum.parent.ID
+			else
+				ID = scored_card.ID
+			end
+
+			if not ID then
+				print(string.format("Error getting ID of joker %s at pos %s", scored_card.ability.name or "(no name)", scored_card.rank or "(no pos)"))
+				return ret, trig
+			end
+
 			for k, v in pairs(ret) do
 				if type(v) == "number" and k == "repetitions" then
-					add_to_joker_results_table(scored_card.ID)
+					add_to_joker_results_table(ID)
 				end
 				if k == "message" then
-					add_to_joker_results_table(scored_card.ID)
+					add_to_joker_results_table(ID)
 				end
 			end
 		end
