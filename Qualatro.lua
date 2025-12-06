@@ -283,12 +283,12 @@ function Game:start_run(args)
 		  G.GAME.base_reroll_cost = 7
 		  --G.GAME.bankrupt_at = -7
 		  for k, v in pairs(G.GAME.hands) do
-			G.GAME.hands[k].chips = 7
-			G.GAME.hands[k].mult = 7
-			G.GAME.hands[k].s_mult = 7
-			G.GAME.hands[k].s_chips = 7
-			G.GAME.hands[k].l_mult = 7
-			G.GAME.hands[k].l_chips = 7
+			G.GAME.hands[k].chips = to_big(7)
+			G.GAME.hands[k].mult = to_big(7)
+			G.GAME.hands[k].s_mult = to_big(7)
+			G.GAME.hands[k].s_chips = to_big(7)
+			G.GAME.hands[k].l_mult = to_big(7)
+			G.GAME.hands[k].l_chips = to_big(7)
 		  end
 	  end
 
