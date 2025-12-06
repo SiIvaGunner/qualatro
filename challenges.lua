@@ -1,11 +1,3 @@
-
-local banned_cards = {}
-for k, v in pairs(G.P_CENTERS) do
-	if v.set == "Joker" and not string.find(k, 'j_qualatro_') then
-		banned_cards[#banned_cards+1] = {id=k}
-	end
-end
-
 SMODS.process_loc_text(G.localization.misc.v_text, "ch_c_qualatro_only", {
 	key = "ch_c_qualatro_only",
 	name = {
@@ -36,7 +28,7 @@ SMODS.Challenge {
 		type = 'Challenge Deck'
 	},
 	restrictions = {
-		banned_cards = banned_cards,
+		banned_cards = {},
 		banned_tags = {
 		},
 		banned_other = {
@@ -258,12 +250,17 @@ SMODS.Challenge {
 G.E_MANAGER:add_event(Event({
 	func = function()
 		local not_common = {}
+		local qualatro_only_banned_cards = {}
 		for k, v in pairs(G.P_CENTERS) do
 			if v.set == "Joker" and v.rarity ~= 1 then
 				not_common[#not_common+1] = {id=k}
 			end
+			if v.set == "Joker" and not string.find(k, 'j_qualatro_') then
+				qualatro_only_banned_cards[#qualatro_only_banned_cards+1] = {id=k}
+			end
 		end
 		SMODS.Challenge.obj_table.c_qualatro_common_rule.restrictions.banned_cards = not_common
+		SMODS.Challenge.obj_table.c_qualatro_QualatroOnly.restrictions.banned_cards = qualatro_only_banned_cards
 		return true
 	end
 }))
