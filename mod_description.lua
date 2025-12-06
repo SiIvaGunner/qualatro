@@ -28,8 +28,8 @@ local P = {
 	roozi = 'Netyasha Roozi',
 	gene = 'Gene',
 	omknee = 'omni',
-	splurgy = 'splurgy'
-
+	splurgy = 'splurgy',
+	snakeman = 'SnakeManvsArbok'
 }
 local minor_contributor = 0.3
 local tester = 0.25
@@ -140,6 +140,7 @@ return {
 								credit(P.omknee, tester),
 								credit(P.gene, tester),
 								credit(P.splurgy, tester),
+								credit(P.snakeman, tester),
 							},
 						},
 						{
