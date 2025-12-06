@@ -4,7 +4,7 @@ dump_lua = true
 priority = 5
 
 # Compatibility with Pokermon/Cryptid
-# NOTE: (Ahmayk) Ta-Ta-Tax Fraud
+# Fixes crash while using goto in tax fraud
 [[patches]]
 [patches.pattern]
 target = "functions/state_events.lua"
