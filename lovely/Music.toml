@@ -3,6 +3,22 @@ version = "1.0.0"
 dump_lua = true
 priority = -1
 
+#NOTE: (Ahmayk) if qualatro is enabled then this code will be patched regardless if the mod loads
+#if the mod fails to load (for example for a missinng dependency)
+#can_load will be false and music will function normally
+[[patches]]
+[patches.pattern]
+target = "game.lua"
+pattern = "if change_context ~= 'splash' then"
+position = "before"
+payload = '''
+if SMODS.Mods.Qualatro and SMODS.Mods.Qualatro.can_load and not G.qualatro_resph_mode_loaded then
+	G.ARGS.push.type = 'enable_qualatro'
+	G.SOUND_MANAGER.channel:push(G.ARGS.push)
+end
+''' 
+match_indent = true
+
 #NOTE: (Ahmayk) some debug stuff so we can print easily here
 [[patches]]
 [patches.pattern]
@@ -28,6 +44,7 @@ function inspect(table)
     end
     return str
 end
+local is_qualatro_mod_active = false
 ''' 
 match_indent = true
 
@@ -48,7 +65,7 @@ target = "engine/sound_manager.lua"
 pattern = "if string.find(s.sound_code,'music') then"
 position = "at"
 payload = '''
-if string.find(s.sound_code,'layer_') then 
+if is_qualatro_mod_active and string.find(s.sound_code,'layer_') then 
 	local should_be_playing = args.qualatro_active_music_layers and args.qualatro_active_music_layers[s.sound_code]
 	if should_be_playing then
 		s.current_volume = s.current_volume or 1
@@ -111,61 +128,77 @@ function load_music(s, args)
 end
 
 function RESTART_MUSIC(args)
-
-	local sounds_to_play = {} 
-	for k, v in pairs(SOURCES) do
-		if string.find(k,'layer_') then 
-			if SOURCES[k] == nil or #SOURCES[k] == 0 then 
-				args.per = 1.0
-				args.vol = 0.6
-				args.sound_code = k
-				local s = load_music(s, args)
-			end
-
-			for i, s in ipairs(v) do
-				s.sound:stop()
-				local should_be_playing = args.qualatro_active_music_layers and args.qualatro_active_music_layers[k]
-				if should_be_playing then
-					--debug_channel:push("starting layered sound on music restart: " .. k)
-					sounds_to_play[#sounds_to_play + 1] = s.sound
+	if is_qualatro_mod_active then
+		local sounds_to_play = {} 
+		for k, v in pairs(SOURCES) do
+			if string.find(k,'layer_') then 
+				if SOURCES[k] == nil or #SOURCES[k] == 0 then 
+					args.per = 1.0
+					args.vol = 0.6
+					args.sound_code = k
+					local s = load_music(s, args)
 				end
-			end
-		end
 
-		if string.find(k,'music') then 
-			for i, s in ipairs(v) do
-				s.sound:stop()
-			end
-			SOURCES[k] = {}
-
-			args.per = 1.0
-			args.vol = 0.6
-			args.sound_code = k
-
-			SOURCES[args.sound_code] = SOURCES[args.sound_code] or {}
-
-			if #SOURCES[args.sound_code] == 0 then
-				local s = load_music(s, args)
-				sounds_to_play[#sounds_to_play + 1] = s.sound
-			else
-				for _, s in ipairs(SOURCES[args.sound_code]) do
-					if s.sound and not s.sound:isPlaying() then
-						s.original_pitch = args.per
-						s.original_volume = args.vol
-						s.created_on_pause = args.overlay_menu
-						s.created_on_state = args.state
-						s.sfx_handled = 0
-						s.transition_timer = 0
-						SET_SFX(s, args)
+				for i, s in ipairs(v) do
+					s.sound:stop()
+					local should_be_playing = args.qualatro_active_music_layers and args.qualatro_active_music_layers[k]
+					if should_be_playing then
+						--debug_channel:push("starting layered sound on music restart: " .. k)
 						sounds_to_play[#sounds_to_play + 1] = s.sound
 					end
 				end
 			end
-		end
-	end
 
-	for k, v in pairs(sounds_to_play) do
-		love.audio.play(sounds_to_play)
+			if string.find(k,'music') then 
+				for i, s in ipairs(v) do
+					s.sound:stop()
+				end
+				SOURCES[k] = {}
+
+				args.per = 1.0
+				args.vol = 0.6
+				args.sound_code = k
+
+				SOURCES[args.sound_code] = SOURCES[args.sound_code] or {}
+
+				if #SOURCES[args.sound_code] == 0 then
+					local s = load_music(s, args)
+					sounds_to_play[#sounds_to_play + 1] = s.sound
+				else
+					for _, s in ipairs(SOURCES[args.sound_code]) do
+						if s.sound and not s.sound:isPlaying() then
+							s.original_pitch = args.per
+							s.original_volume = args.vol
+							s.created_on_pause = args.overlay_menu
+							s.created_on_state = args.state
+							s.sfx_handled = 0
+							s.transition_timer = 0
+							SET_SFX(s, args)
+							sounds_to_play[#sounds_to_play + 1] = s.sound
+						end
+					end
+				end
+			end
+		end
+
+		for k, v in pairs(sounds_to_play) do
+			love.audio.play(sounds_to_play)
+		end
+	else
+		--NOTE: (Ahmayk) og code
+		for k, v in pairs(SOURCES) do
+			if string.find(k,'music') then 
+				for i, s in ipairs(v) do
+					s.sound:stop()
+				end
+				SOURCES[k] = {}
+				args.per = 0.7
+				args.vol = 0.6
+				args.sound_code = k
+				local s = PLAY_SOUND(args)
+				s.initialized = true
+			end
+		end
 	end
 end
 
@@ -227,5 +260,8 @@ position = "before"
 payload = '''
 elseif request.type == 'process_layered_music' then
 	PROCESS_LAYERED_MUSIC(request)
+elseif request.type == 'enable_qualatro' then
+	is_qualatro_mod_active = true
+	--debug_channel:push("QUALATRO ACTIVE")
 '''
 match_indent = true

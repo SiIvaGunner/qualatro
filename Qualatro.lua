@@ -8095,9 +8095,11 @@ function Game:update(dt)
 	G.ARGS.push.type = 'process_layered_music'
 	G.SOUND_MANAGER.channel:push(G.ARGS.push)
 
-	local debug_string = love.thread.getChannel("debug"):pop()
-	if debug_string and is_debug then
-		print(debug_string)
+	if is_debug then
+		local debug_string = love.thread.getChannel("debug"):pop()
+		if debug_string then
+			print(debug_string)
+		end
 	end
 end
 
