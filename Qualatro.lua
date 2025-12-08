@@ -2496,8 +2496,12 @@ local function stingy_choose()
 	if G.STATE == G.STATES.SHOP then 
 		stingy_add_valid_picks(valid_picks, G.shop_jokers) 
 		stingy_add_valid_picks(valid_picks, G.shop_vouchers) 
-		for k, v in pairs(G.shop_booster.cards) do
-			valid_picks[#valid_picks + 1] = v
+		if G.shop_booster then
+			for k, v in pairs(G.shop_booster.cards) do
+				if v then
+					valid_picks[#valid_picks + 1] = v
+				end
+			end
 		end
 	end
 
@@ -2506,31 +2510,33 @@ local function stingy_choose()
 	if #valid_picks then
 		local takeable_picks = {}
 		for k, v in pairs(valid_picks) do
-
-			local is_takeable = false
-			if G.STATE == G.STATES.SHOP then
-				if v.ability.set == 'Voucher' or
-					v.ability.set == 'Enhanced' or 
-					v.ability.set == 'Default' or
-					v.ability.set == 'Booster' or
-					(v.ability.set == 'Joker' and #G.jokers.cards < G.jokers.config.card_limit + ((v.edition and v.edition.negative) and 1 or 0)) or
-					(v.ability.consumeable and #G.consumeables.cards < G.consumeables.config.card_limit + ((v.edition and v.edition.negative) and 1 or 0))
-				then
+			if v and v.ability then
+				local is_takeable = false
+				if G.STATE == G.STATES.SHOP then
+					if
+						v.ability.set == 'Voucher' or
+						v.ability.set == 'Enhanced' or
+						v.ability.set == 'Default' or
+						v.ability.set == 'Booster' or
+						(v.ability.set == 'Joker' and #G.jokers.cards < G.jokers.config.card_limit + ((v.edition and v.edition.negative) and 1 or 0)) or
+						(v.ability.consumeable and #G.consumeables.cards < G.consumeables.config.card_limit + ((v.edition and v.edition.negative) and 1 or 0))
+					then
+						is_takeable = true
+					end
+				else
+					--NOTE: (Ahmayk) assume everything in a booster pack is "takeable"
+					--(here take means use actually as we can't take in a booster pack)
 					is_takeable = true
 				end
-			else
-				--NOTE: (Ahmayk) assume everything in a booster pack is "takeable"
-				--(here take means use actually as we can't take in a booster pack)
-				is_takeable = true
-			end
 
-			--NOTE: (Ahmayk) but do not pick consumeables we can't use rignt now without selecting anything 
-			if v.ability.consumeable and not v:can_use_consumeable(true, true) then
-				is_takeable = false
-			end
+				--NOTE: (Ahmayk) but do not pick consumeables we can't use rignt now without selecting anything
+				if v.ability.consumeable and not v:can_use_consumeable(true, true) then
+					is_takeable = false
+				end
 
-			if is_takeable then
-				takeable_picks[#takeable_picks + 1] = v
+				if is_takeable then
+					takeable_picks[#takeable_picks + 1] = v
+				end
 			end
 		end
 
@@ -2574,8 +2580,6 @@ local function stingy_sound_mine(card, is_pack_open)
 end
 
 local function stingy_sound_miss(card)
-	local pitch = stingy_pitch(card) 
-
 	local pitch = stingy_pitch(card) 
 	local audio = 'qualatro_stingy_miss1'
 	local volume = 0.5
@@ -2637,76 +2641,78 @@ end
 
 local function stingy_buy(card, to_buy) 
 	--print("\nBUYING: " .. to_buy.config.center.name)
+	if card and card.ability and to_buy and to_buy.ability and to_buy.config and to_buy.config.center then
+		local should_buy = false
+		local should_use = false
+		local has_space = check_for_buy_space_no_alert(to_buy)
 
-	local should_buy = false 
-	local should_use = false 
-	local has_space = check_for_buy_space_no_alert(to_buy)
-
-	--NOTE: (Ahmayk) vouchers and consumeables must be used 
-	if to_buy.ability.set == "Voucher" or to_buy.ability.consumeable then
-		should_use = true 
-	end
-
-	if G.STATE == G.STATES.SHOP then
-		should_buy = true 
-		--NOTE: (Ahmayk) If there room for the consumeable buy it, don't use it
-		if to_buy.config.center.consumeable then
-			should_buy = has_space 
-			should_use = not has_space 
+		--NOTE: (Ahmayk) vouchers and consumeables must be used
+		if to_buy.ability.set == "Voucher" or to_buy.ability.consumeable then
+			should_use = true
 		end
-	else
-		--NOTE: (Ahmayk) this codepath is called if we are in a booster pack
-		--always "use" in boosters, regardless of what it is
-		should_use = true
 
-		--NOTE: (Ahmayk) except if it's a joker, jokers should be bought
-		--"using" here progresses the booster pack state, we only want to do this
-		--if there is room to buy the joker
-		if to_buy.ability.set == "Joker" then
-			should_buy = true 
-			should_use = has_space 
-		end
-	end
-
-	--NOTE: (Amayk) only use consumeable if we can't buy and
-	--the game tells us we can use it right now
-	if 
-		to_buy.config.center.consumeable and
-		not should_buy and
-		should_use and
-		not to_buy:can_use_consumeable(true, true)
-	then
-		should_use = false
-	end
-
-	card:juice_up(0.3, 0.5)
-	if should_buy then
-		if should_use then
-			G.FUNCS.buy_from_shop({config={ref_table=to_buy, id = 'buy_and_use'}})
+		if G.STATE == G.STATES.SHOP then
+			should_buy = true
+			--NOTE: (Ahmayk) If there room for the consumeable buy it, don't use it
+			if to_buy.config.center.consumeable then
+				should_buy = has_space
+				should_use = not has_space
+			end
 		else
-			G.FUNCS.buy_from_shop({config={ref_table=to_buy}})
+			--NOTE: (Ahmayk) this codepath is called if we are in a booster pack
+			--always "use" in boosters, regardless of what it is
+			should_use = true
+
+			--NOTE: (Ahmayk) except if it's a joker, jokers should be bought
+			--"using" here progresses the booster pack state, we only want to do this
+			--if there is room to buy the joker
+			if to_buy.ability.set == "Joker" then
+				should_buy = true
+				should_use = has_space
+			end
 		end
-	else 
-		if should_use then
-			G.FUNCS.use_card({config={ref_table=to_buy}})
+
+		--NOTE: (Amayk) only use consumeable if we can't buy and
+		--the game tells us we can use it right now
+		if
+			to_buy.config.center.consumeable and
+			not should_buy and
+			should_use and
+			not to_buy:can_use_consumeable(true, true)
+		then
+			should_use = false
+		end
+
+		card:juice_up(0.3, 0.5)
+		if should_buy then
+			if should_use then
+				G.FUNCS.buy_from_shop({ config = { ref_table = to_buy, id = 'buy_and_use' } })
+			else
+				G.FUNCS.buy_from_shop({ config = { ref_table = to_buy } })
+			end
 		else
-			play_sound('cancel', 1.0, 0.5)
-			to_buy:juice_up()
+			if should_use then
+				G.FUNCS.use_card({ config = { ref_table = to_buy } })
+			else
+				play_sound('cancel', 1.0, 0.5)
+				to_buy:juice_up()
+			end
 		end
-	end
 
-	--print(to_buy.config.center.name .. ": should_buy: " .. tostring(should_buy) .. " should_use: " .. tostring(should_use))
+		--print(to_buy.config.center.name .. ": should_buy: " .. tostring(should_buy) .. " should_use: " .. tostring(should_use))
 
-	if (should_buy and has_space) or should_use then
-		play_sound('tarot1')
-		if to_buy.cost >= 10 then
-			local pitch = stingy_pitch(card)
-			play_sound('qualatro_stingy_best', pitch, 0.5)
+		if (should_buy and has_space) or should_use then
+			play_sound('tarot1')
+			if to_buy.cost >= 10 then
+				local pitch = stingy_pitch(card)
+				play_sound('qualatro_stingy_best', pitch, 0.5)
+			else
+				stingy_sound_mine(card)
+				to_buy:add_sticker("qualatro_stingy", true)
+			end
+		else
+			stingy_sound_miss(card)
 		end
-		stingy_sound_mine(card)
-		to_buy:add_sticker("qualatro_stingy", true)
-	else
-		stingy_sound_miss(card)
 	end
 
 	stingy_end()
@@ -2717,7 +2723,7 @@ local function stingy_highlight(card, to_buy)
 		trigger = 'after',
 		delay = 1,
 		func = function()
-			if to_buy.area then
+			if card and to_buy and to_buy.area and to_buy.area.add_to_highlighted then
 				card:juice_up(0.3, 0.5)
 				to_buy.area:add_to_highlighted(to_buy)
 			end
@@ -2726,7 +2732,7 @@ local function stingy_highlight(card, to_buy)
 	}))
 end
 
-function stingy_start(card)
+local function stingy_start(card)
 	local to_buy = stingy_choose()
 	if to_buy then
 
@@ -3074,11 +3080,18 @@ local function get_missing_ranks()
 	if G.GAME and G.playing_cards and #G.playing_cards > 0 then
 		local ranksInDeck = {}
 		for _, rank in ipairs(SMODS.Rank.obj_buffer) do
-			ranksInDeck[rank] = false
-			for _, playing_card in ipairs(G.playing_cards) do
-				if playing_card.base.value == rank and not SMODS.has_no_rank(playing_card) then
-					ranksInDeck[rank] = true
-					break
+			if rank then
+				ranksInDeck[rank] = false
+				for _, playing_card in ipairs(G.playing_cards) do
+					if 
+						playing_card and
+						playing_card.base and
+						playing_card.base.value == rank and
+						not SMODS.has_no_rank(playing_card)
+					then
+						ranksInDeck[rank] = true
+						break
+					end
 				end
 			end
 		end
@@ -3094,19 +3107,24 @@ local function get_missing_ranks()
 end
 
 local function update_lost_media(card, missing_ranks_array, is_notify)
-	local xmult = 1 + (#missing_ranks_array * card.ability.extra.xmult_scale)
-	if card.ability.extra.xmult ~= xmult then
-		card.ability.extra.xmult = xmult
-		if #missing_ranks_array > 0 then
-			card.ability.extra.missing_ranks_string = table.concat(missing_ranks_array, ", ")
-		else
-			card.ability.extra.missing_ranks_string = "None"
-		end
-		if (is_notify) then
-			card_eval_status_text(card, 'extra', nil, nil, nil, {colour = G.C.RED, message = localize{type = 'variable', key = 'a_xmult', vars = {card.ability.extra.xmult}}})
+	if 
+		card and
+		card.ability and
+		card.ability.extra
+	then
+		local xmult = 1 + (#missing_ranks_array * card.ability.extra.xmult_scale)
+		if card.ability.extra.xmult ~= xmult then
+			card.ability.extra.xmult = xmult
+			if #missing_ranks_array > 0 then
+				card.ability.extra.missing_ranks_string = table.concat(missing_ranks_array, ", ")
+			else
+				card.ability.extra.missing_ranks_string = "None"
+			end
+			if (is_notify) then
+				card_eval_status_text(card, 'extra', nil, nil, nil, {colour = G.C.RED, message = localize{type = 'variable', key = 'a_xmult', vars = {card.ability.extra.xmult}}})
+			end
 		end
 	end
-
 end
 
 local function lost_media()
@@ -7943,9 +7961,13 @@ function Game:update(dt)
 
 	for _, card in pairs(G.I.CARD) do
 		if
+			card and
 			card.ability and
 			card.ability.set == "Tarot" and
+			card.config and
+			card.config.center and
 			card.config.center.key ~= 'c_hanged_man' and
+			card.ability.consumeable and
 			card.ability.max_highlighted and
 			card.ability.min_highlighted == nil
 		then
@@ -7968,6 +7990,7 @@ function Game:update(dt)
 		local lost_medias = {} 
 		for _, card in pairs(G.I.CARD) do
 			if
+				card and
 				card.config and
 				card.config.center and
 				card.config.center.key == 'j_qualatro_jokex_lost_media' and
@@ -8030,23 +8053,17 @@ function Game:update(dt)
 		G.qualatro_found_joker_music_sound_codes = {}
 		local generated_joker_sound_labels = {}
 		for k, v in pairs(G.P_CENTERS) do
-			if v.set == "Joker" then
+			if v and v.key and v.set == "Joker" then
 				local generated_sound_key = "qualatro_layer_" .. string.sub(v.key, 12, -1)
 				generated_joker_sound_labels[generated_sound_key] = v.key
 			end
 		end
 		for _, sound in pairs(SMODS.Sounds) do
-			if string.find(sound.sound_code, 'qualatro_layer') then 
-				local found = false
-				for k, v in pairs(generated_joker_sound_labels) do
-					if generated_joker_sound_labels[sound.sound_code] then
-						local joker_key = generated_joker_sound_labels[sound.sound_code]
-						G.qualatro_found_joker_music_sound_codes[joker_key] = sound.sound_code
-						found = true
-						break
-					end
-				end
-				if not found then
+			if sound and string.find(sound.sound_code, 'qualatro_layer') then 
+				if generated_joker_sound_labels[sound.sound_code] then
+					local joker_key = generated_joker_sound_labels[sound.sound_code]
+					G.qualatro_found_joker_music_sound_codes[joker_key] = sound.sound_code
+				else
 					print("WARNING: qualatro music layer does not match any jokers: "..sound.sound_code)
 				end
 			end
@@ -8061,15 +8078,23 @@ function Game:update(dt)
 
 		local active_joker_key_table = {}
 		for _, area in ipairs(SMODS.get_card_areas('jokers')) do
-			for _, card in pairs(area.cards) do
-				if card and type(card) == 'table' and not card.debuff then
-					local key = G.qualatro_music_copy_table[card.config.center.key] or card.config.center.key
-					active_joker_key_table[key] = true
+			if area then
+				for _, card in pairs(area.cards) do
+					if card and type(card) == 'table' and not card.debuff then
+						local key = G.qualatro_music_copy_table[card.config.center.key] or card.config.center.key
+						active_joker_key_table[key] = true
+					end
 				end
 			end
 		end
 
-		if G.title_top and G.title_top.cards and #G.title_top.cards >= 1 then
+		if 
+			G.title_top and
+			G.title_top.cards and
+			#G.title_top.cards >= 1 and
+			G.title_top.cards[1].config and
+			G.title_top.cards[1].config.center
+		then
 			active_joker_key_table[G.title_top.cards[1].config.center.key] = true
 		end
 
