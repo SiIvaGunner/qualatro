@@ -6795,14 +6795,14 @@ local function etika_reveal()
 				if card and card.config and card.config.center and card.config.center.key == hype_joker_key then
 					local found_alraedy = false
 					for _, v in ipairs(card_etika.ability.extra.found_hype_ids) do
-						if v == card.ID then
+						if v == card.unique_val then
 							found_alraedy = true
 							break
 						end
 					end
 
 					if not found_alraedy then
-						table.insert(card_etika.ability.extra.found_hype_ids, card.ID)
+						table.insert(card_etika.ability.extra.found_hype_ids, card.unique_val)
 						delay(0.5, 'other')
 
 						if G.GAME.played_etika_indexes == nil or #G.GAME.played_etika_indexes >= 5 then
