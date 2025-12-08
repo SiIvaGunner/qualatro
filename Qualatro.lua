@@ -6738,7 +6738,7 @@ local function etika_reveal()
 				local scratch_canvas = love.graphics.newCanvas(w, h, {type = '2d', readable = true})
 				scratch_canvas:setFilter('linear', 'linear')
 				love.graphics.setCanvas(scratch_canvas)
-				love.graphics.clear(0, 0, 0, 1)
+				--love.graphics.clear(0, 0, 0, 0)
 				love.graphics.setColor(G.C.WHITE)
 				if etika_quad then
 					love.graphics.draw(etika_atlas.image, etika_quad, 0, 0, 0, 1*scaling, 1*scaling)
