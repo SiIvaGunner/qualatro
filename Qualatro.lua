@@ -203,7 +203,7 @@ local _jokers = {
 }
 
 local jokers = {}
-jokerkey = {}
+local jokerkey = {}
 for _,_j in ipairs(_jokers) do
 	jokers[_j] = _j
 	jokerkey[_j] = 'j_qualatro_'.._j
@@ -230,9 +230,6 @@ local function get_jokerpos()
 	local jokerpos_res = {}
 	for y,r in ipairs(_jokerpos) do
 		for x,c in ipairs(r) do
-			if c == nil then
-				
-			end
 			if c ~= '' then
 				jokerpos_res[string.gsub(c, '^j_', '')] = {
 					x = x-1,
@@ -243,7 +240,7 @@ local function get_jokerpos()
 	end
 	return jokerpos_res
 end
-jokerpos = get_jokerpos()
+local jokerpos = get_jokerpos()
 
 --NOTE: (Ahmayk) do not allow continue if ARG mode does not match save file
 local _super_can_continue = G.FUNCS.can_continue
@@ -272,7 +269,7 @@ end
 local _super_start_run = Game.start_run
 function Game:start_run(args)
   local ret = _super_start_run(self, args)
-  if G.GAME.resph_mode == nil then 
+  if G.GAME and G.GAME.resph_mode == nil then 
 	  G.GAME.resph_mode = G.qualatro_resph_mode_loaded
   end
 
@@ -325,12 +322,12 @@ function UPDATE_ATLAS()
 
 	for _,j in pairs(resph_jokers) do
 		local _joker = G.P_CENTERS['j_qualatro_'..j]
-		if _joker then
+		if _joker and _joker.pos then
 			_joker.atlas = _update_atlas
 			_joker.pos.x = _update_jokerpos[j].x
 			_joker.pos.y = _update_jokerpos[j].y
 
-			_joker_soul = _update_jokerpos[j..SOUL]
+			local _joker_soul = _update_jokerpos[j..SOUL]
 			if _joker_soul then
 				if not _joker.soul_pos then _joker.soul_pos = {x=0,y=0} end
 				_joker.soul_pos.x = _joker_soul.x
@@ -479,7 +476,7 @@ local function joke_explainer()
 			if context.before then
 				local intriguing
 				for k, v in ipairs(context.full_hand) do
-					if v:get_id() == 7 and v.config.center == G.P_CENTERS.c_base and not v.debuff and not v.getting_steeled then
+					if v and v.config and v:get_id() == 7 and v.config.center == G.P_CENTERS.c_base and not v.debuff and not v.getting_steeled then
 						intriguing = true
 						v.getting_steeled = true
 						G.E_MANAGER:add_event(Event({
@@ -505,17 +502,25 @@ local function joke_explainer()
 end
 
 local function susie_force_update_cardarea(card)
-	local num_cards = card.ability.extra.deck_hand_size
-	local lower_index = #G.deck.cards - num_cards + 1
-	if lower_index < 1 then
-		lower_index = 1
-	end
+	if 
+		card and
+		card.ability and
+		card.ability.extra and
+		G.deck and
+		G.susie_cardarea
+	then
+		local num_cards = card.ability.extra.deck_hand_size
+		local lower_index = #G.deck.cards - num_cards + 1
+		if lower_index < 1 then
+			lower_index = 1
+		end
 
-	G.susie_cardarea.cards = {}
-	local j = 1
-	for i = #G.deck.cards, lower_index, -1 do
-		G.susie_cardarea.cards[j] = G.deck.cards[i]
-		j = j + 1
+		G.susie_cardarea.cards = {}
+		local j = 1
+		for i = #G.deck.cards, lower_index, -1 do
+			G.susie_cardarea.cards[j] = G.deck.cards[i]
+			j = j + 1
+		end
 	end
 end
 
@@ -524,12 +529,14 @@ local function susie()
 	G.susie_cardarea = { cards = {} }
 
 	local function susie_update_cardarea_event(card, adding_susie)
-		if not adding_susie and not next(SMODS.find_card(jokerkey.susie)) then
-			G.susie_cardarea.cards = {}
-		else
-			SMODS.drawn_cards = SMODS.drawn_cards or {}
-			if #SMODS.drawn_cards > 0 then return false end
-			susie_force_update_cardarea(card)
+		if card then
+			if not adding_susie and not next(SMODS.find_card(jokerkey.susie)) then
+				G.susie_cardarea.cards = {}
+			else
+				SMODS.drawn_cards = SMODS.drawn_cards or {}
+				if #SMODS.drawn_cards > 0 then return false end
+				susie_force_update_cardarea(card)
+			end
 		end
 		return true
 	end
@@ -1553,7 +1560,7 @@ local function golden_necklace()
 		blueprint_compat = true,
 		calculate = function(_, card, context)
 			if context.individual and context.cardarea == G.play then
-				if context.other_card:get_id() == 8 and not context.other_card.debuff then
+				if context.other_card and context.other_card:get_id() == 8 and not context.other_card.debuff then
 					G.GAME.dollar_buffer = (G.GAME.dollar_buffer or 0) + card.ability.extra.money
 					G.E_MANAGER:add_event(Event({func = (function() G.GAME.dollar_buffer = 0; return true end)}))
 					return {
@@ -1783,17 +1790,23 @@ local function shop_rerun_set_cost()
 	G.E_MANAGER:add_event(Event({func = function()
 	if G.shop_jokers and G.shop_jokers.cards then
 		for _,v in ipairs(G.shop_jokers.cards) do
-			v:set_cost()
+			if v then
+				v:set_cost()
+			end
 		end
 	end
 	if G.shop_vouchers and G.shop_vouchers.cards then
 		for _,v in ipairs(G.shop_vouchers.cards) do
-			v:set_cost()
+			if v then
+				v:set_cost()
+			end
 		end
 	end
 	if G.shop_booster and G.shop_booster.cards then
 		for _,v in ipairs(G.shop_booster.cards) do
-			v:set_cost()
+			if v then
+				v:set_cost()
+			end
 		end
 	end
 	return true end }))
@@ -2130,7 +2143,6 @@ local function papyrus()
 			delay = 0.5 + math.random() * 0.4,
 			is_papyrus = true,
 			func = function()
-				if extrafunc then extrafunc() end
 				attention_text({
 					text = message,
 					scale = 0.7,
@@ -2144,7 +2156,7 @@ local function papyrus()
 				play_sound('qualatro_papyrus', 1, 0.4)
 				if not is_extra_quip then
 					local generic_percent = 0.9 + 0.2*math.random()
-					play_sound('generic1', 0.8+generic_percent*0.2, volume)
+					play_sound('generic1', 0.8+generic_percent*0.2, 1)
 				end
 				if is_extra_quip then
 					G.GAME.sucks_at_papyrus = false
@@ -2254,7 +2266,7 @@ local function papyrus()
 	end
 
 	local function update_papyrus(mode)
-		if G and G.jokers and G.jokers.cards and not G.SETTINGS.paused then
+		if G and G.jokers and G.jokers.cards and not G.SETTINGS.paused and G.GAME then
 			for i = 1, #G.jokers.cards do
 				G.jokers.cards[i]:calculate_joker({papyrus_mode = mode})
 			end
@@ -2321,13 +2333,13 @@ local function lady()
 			if context.before then
 				local sixes = 0
 				for k, v in ipairs(context.full_hand) do
-					if v:get_id() == 6 then
+					if v and v:get_id() == 6 then
 						sixes = sixes + 1
 					end
 				end
 				if sixes == 3 then
 					for k, v in ipairs(G.hand.cards) do
-						if v.config.center == G.P_CENTERS.c_base --[[and not v.debuff--]] then
+						if v and v.config.center == G.P_CENTERS.c_base --[[and not v.debuff--]] then
 							G.E_MANAGER:add_event(Event({
 								func = function()
 									v:set_ability(G.P_CENTERS.m_gold, nil, false)
@@ -2437,9 +2449,11 @@ local function slider()
 			--or we write our own logic detecting if a card's mult or chips have gone up a bit more manually than this
 			if context.retrigger_joker_check and not context.retrigger_joker then
 				local ocard = context.other_card
-				if not (context.other_context and context.other_context.joker_main)
-					and context.other_card.ability and ocard.ability.extra
-					and
+				if 
+					ocard and 
+					not (context.other_context and context.other_context.joker_main) and
+					context.other_card.ability and
+					ocard.ability.extra and
 					(			-- +Chips
 						(type(ocard.ability.extra) == 'table' and ocard.ability.extra.chips and (ocard.ability.extra.chips ~= 0) and ocard.ability.extra.chip_mod)
 						or		-- +Mult
@@ -2447,7 +2461,8 @@ local function slider()
 						-- or		-- xMult
 						-- ((ocard.ability.x_mult > 1 or (ocard.ability.caino_xmult and (ocard.ability.caino_xmult > 1))) and ocard.ability.name ~= 'Throwback')
 					)
-					and pseudorandom("slider") < (G.GAME.probabilities.normal or 1) / card.ability.extra.odds then
+					and pseudorandom("slider") < (G.GAME.probabilities.normal or 1) / card.ability.extra.odds
+				then
 					card_eval_status_text(ocard, 'extra', nil, nil, nil, {message = localize("k_again_ex")})
 					return {
 						repetitions = 1,
@@ -3044,7 +3059,7 @@ local function ride_the_raft()
 			if context.before and not context.blueprint then
 				local faces = false
 				for i = 1, #context.scoring_hand do
-					if context.scoring_hand[i]:is_face() then
+					if context.scoring_hand[i] and context.scoring_hand[i]:is_face() then
 						faces = true
 						break
 					end
@@ -3349,7 +3364,7 @@ local function onetwo_jump()
 		blueprint_compat = true,
 		calculate = function(_, card, context)
 			if context.individual and context.cardarea == G.play then
-				if context.other_card:get_id() == 14 or context.other_card:get_id() == 2 and not context.other_card.debuff then
+				if context.other_card and context.other_card:get_id() == 14 or context.other_card:get_id() == 2 and not context.other_card.debuff then
 					return {
 						message = localize{type='variable',key='a_xmult',vars={card.ability.extra.xmult}},
 						colour = G.C.RED,
@@ -3398,46 +3413,48 @@ local function gegagedigedagedago()
 					func = function()
 						local visible_cards = {}
 						for _, v in pairs(G.jokers.cards) do
-							if v.ability.set == "Joker" and not v.edition and not v.getting_sliced then
+							if v and v.ability.set == "Joker" and not v.edition and not v.getting_sliced then
 								table.insert(visible_cards, v)
 							end
 						end
 						for _, v in pairs(G.hand.cards) do
-							if not v.edition and not v.getting_sliced then
+							if v and not v.edition and not v.getting_sliced then
 								table.insert(visible_cards, v)
 							end
 						end
 						for _, v in pairs(G.consumeables.cards) do
-							if not v.edition and not v.getting_sliced then
+							if v and not v.edition and not v.getting_sliced then
 								table.insert(visible_cards, v)
 							end
 						end
 
 						if #visible_cards > 0 then
 							local eligible_card = pseudorandom_element(visible_cards, pseudoseed("gegagedigedagedarandomjoker"))
-							-- print(eligible_card.config.center.key.." "..eligible_card.rank)
+							if eligible_card then
+								-- print(eligible_card.config.center.key.." "..eligible_card.rank)
 
-							--NOTE: (Ahmayk) cards are only given editions which are possible for that card type in vanilla balatro
-							--So consumbealbes can only be negative and playing cards cannot be negative
-							local random_edition = nil
-							if eligible_card.config.center.consumeable then
-								random_edition = G.P_CENTERS.e_negative
-							else
-								while
-									random_edition == nil or
-									random_edition.key == "e_base" or
-									((eligible_card.ability.set == "Default" or eligible_card.ability.set == "Enhanced") and random_edition.key == "e_negative")
-								do
-									random_edition = pseudorandom_element(G.P_CENTER_POOLS.Edition, pseudoseed("gegagedigedagedarandomedition"))
+								--NOTE: (Ahmayk) cards are only given editions which are possible for that card type in vanilla balatro
+								--So consumbealbes can only be negative and playing cards cannot be negative
+								local random_edition = nil
+								if eligible_card.config.center.consumeable then
+									random_edition = G.P_CENTERS.e_negative
+								else
+									while
+										random_edition == nil or
+										random_edition.key == "e_base" or
+										((eligible_card.ability.set == "Default" or eligible_card.ability.set == "Enhanced") and random_edition.key == "e_negative")
+									do
+										random_edition = pseudorandom_element(G.P_CENTER_POOLS.Edition, pseudoseed("gegagedigedagedarandomedition"))
+									end
 								end
+
+								card_eval_status_text(eligible_card, 'extra', nil, nil, nil, {message = localize("qua_helped_ex"), colour = G.C.RED, instant=true })
+								eligible_card:set_edition({ [random_edition.key:sub(3)] = true }, true)
+								card_to_notify:juice_up();
+
+								triggered = true
+								card_to_notify.getting_sliced = true
 							end
-
-							card_eval_status_text(eligible_card, 'extra', nil, nil, nil, {message = localize("qua_helped_ex"), colour = G.C.RED, instant=true })
-							eligible_card:set_edition({ [random_edition.key:sub(3)] = true }, true)
-							card_to_notify:juice_up();
-
-							triggered = true
-							card_to_notify.getting_sliced = true
 							return true
 						else
 							card_eval_status_text(card_to_notify, 'extra', nil, nil, nil, {message = localize("qua_help_me"), colour = G.C.RED, sound = 'qualatro_HELP_ME' })
@@ -3576,8 +3593,12 @@ local function reverb()
 		config = { extra = { base_odds = 2 } },
 		loc_vars = function(_, info_queue, card)
 			local odds = math.max(card.ability.extra.base_odds, 1 + 1e-5)
+			local prob = 1
+			if G.GAME and G.GAME.probabilities then
+				prob = G.GAME.probabilities.normal
+			end
 			return { vars = {
-				G.GAME.probabilities.normal or 1,
+				prob,
 				odds,
 				odds ^ 2,
 				odds ^ 3,
@@ -3657,7 +3678,7 @@ local function gadget_room()
 			local play_count = #G.play.cards
 			local it = 1
 			for k, v in ipairs(G.play.cards) do
-				if (not v.shattered) and (not v.destroyed) then 
+				if v and (not v.shattered) and (not v.destroyed) then 
 					draw_card(G.play,G.deck, it*100/play_count,'down', false, v)
 					it = it + 1
 				end
@@ -3687,7 +3708,7 @@ local function missingno()
 		end
 	end
 
-	function repeat_code(ret, code, card, context, num)
+	local function repeat_code(ret, code, card, context, num)
 		for i = 1, num do
 			local retNew = code(card, context) 
 			if type(ret) == 'table' and type(retNew) == 'table' then
@@ -3731,7 +3752,7 @@ local function missingno()
 
 	local function random_colour(key)
 		local colour = pseudorandom_element(G.C, "missingno_colour_"..key)
-		if not pcall(function()
+		if not colour or not pcall(function()
 			while (type(colour[1]) ~= "number") do
 				colour = pseudorandom_element(G.C, "missingno_colour_"..key)
 			end
@@ -3765,12 +3786,11 @@ local function missingno()
 			play_limit_delta = 0,
 		} },
 		loc_vars = function(_, info_queue, card)
-			local lines = {}
 			local pos = 1
 			for i = 1, 6 do
 				card.config.center.loc_txt.text_parsed[i] = nil
 				local random_desc = pseudorandom_element(G.localization.descriptions.Joker, "missingnoDesc")
-				if random_desc.text and random_desc.text[i] and type(random_desc.text[i]) == "string" then
+				if random_desc and random_desc.text and random_desc.text[i] and type(random_desc.text[i]) == "string" then
 					local parsed_string = loc_parse_string(random_desc.text[i])
 					if not parsed_string then break end
 					for _,v in pairs(parsed_string) do
@@ -3840,7 +3860,7 @@ local function missingno()
 				}))
 
 				local code = pseudorandom_element(codes(), pseudoseed("missingno_proc"))
-				if not pcall(function()
+				if not code or not pcall(function()
 					local ret = code(card, context)
 
 					if pseudoseed("missingnoTWICE") < 0.3 * G.GAME.probabilities.normal then
@@ -4033,9 +4053,12 @@ local function interior_joker()
 			chips = 4, dollars = 1, max_dollars = 25
 		} },
 		loc_vars = function(_, info_queue, card)
-			local chips_mod = math.floor((card.ability.extra.max_dollars - to_number(G.GAME.dollars) - (G.GAME.dollar_buffer or 0))/card.ability.extra.dollars)
-			if chips_mod < 0 then
-				chips_mod = 0
+			local chips_mod = 0
+			if G.GAME then
+				chips_mod = math.floor((card.ability.extra.max_dollars - to_number(G.GAME.dollars) - (G.GAME.dollar_buffer or 0)) / card.ability.extra.dollars)
+				if chips_mod < 0 then
+					chips_mod = 0
+				end
 			end
 			return { vars = {
 				card.ability.extra.chips,
@@ -4071,7 +4094,7 @@ local function crazy_bus()
 		card.ability.extra.current_rank_id = 14
 		local valid_crazy_cards = {}
 		for k, v in ipairs(G.playing_cards) do
-			if not SMODS.has_no_rank(v) then
+			if v and not SMODS.has_no_rank(v) then
 				valid_crazy_cards[#valid_crazy_cards+1] = v
 			end
 		end
@@ -4085,7 +4108,9 @@ local function crazy_bus()
 				end
 			end
 			local crazy_card = pseudorandom_element(valid_crazy_cards, pseudoseed('crazybus'..G.GAME.round_resets.ante..tostring(index)))
-			card.ability.extra.current_rank_id = crazy_card.base.id
+			if crazy_card then
+				card.ability.extra.current_rank_id = crazy_card.base.id
+			end
 		end
 	end
 
@@ -4491,7 +4516,7 @@ local function dian_shi_ma_li()
 			art = { P.party_rock },
 			code = { P.alan }
 		},
-		config = { counter, extra = { chips = 7, chips2 = 70, mult = 7 } },
+		config = { extra = { chips = 7, chips2 = 70, mult = 7 } },
 		loc_vars = function(_, info_queue, card)
 			return { 
 				vars = { 
@@ -4511,7 +4536,7 @@ local function dian_shi_ma_li()
 			end
 
 			if context.individual and context.cardarea == G.play then
-				if context.other_card:get_id() == 7 then
+				if context.other_card and context.other_card:get_id() == 7 then
 					card.ability.counter = card.ability.counter + 1
 					if card.ability.counter == 1 then
 						return {
@@ -4609,7 +4634,7 @@ local function planet_b_ball()
 		if G.GAME and G.GAME.hands then
 			local valid_num_hands = 0
 			for _, v in pairs(G.GAME.hands) do
-				if to_big(v.level) >= to_big(card.ability.extra.poker_hand_level) then
+				if v and to_big(v.level) >= to_big(card.ability.extra.poker_hand_level) then
 					valid_num_hands = valid_num_hands + 1
 				end
 			end
@@ -4703,7 +4728,6 @@ local function color_war()
 		blueprint_compat = true,
 
 		calculate = function(_, card, context)
-			--NOTE: (Ahmayk) This won't work with custom suits from other mods as suit data doesn't have any concept of a color
 			if context.joker_main and context.cardarea == G.jokers and not context.before and not context.after and context.scoring_hand then
 				local has_red = false
 				local has_black = false
@@ -4748,7 +4772,7 @@ local function dancing_mad()
 	local function dancing_mad_choose_suit(card)
 		local valid_mad_suits = {}
 		for k, v in ipairs(G.playing_cards) do
-			if not SMODS.has_no_suit(v) and not SMODS.has_no_rank(v) then
+			if v and not SMODS.has_no_suit(v) and not SMODS.has_no_rank(v) then
 				valid_mad_suits[#valid_mad_suits+1] = v.base.suit
 			end
 		end
@@ -4764,7 +4788,7 @@ local function dancing_mad()
 			func = function()
 				card.ability.extra.debuffs_active = true
 				for _, v in ipairs(G.playing_cards) do
-					if v.area ~= G.jokers and v:is_suit(card.ability.extra.suit, true) then
+					if v and v.area ~= G.jokers and v:is_suit(card.ability.extra.suit, true) then
 						v:juice_up()
 						SMODS.debuff_card(v, true, jokerkey.dancing_mad)
 					end
@@ -4781,14 +4805,14 @@ local function dancing_mad()
 		local dancing_mads = SMODS.find_card(jokerkey.dancing_mad)
 		local other_debuffed_suits = {}
 		for _, v in ipairs(dancing_mads) do
-			if v ~= card then
+			if v and v ~= card then
 				other_debuffed_suits[v.ability.extra.suit] = true
 			end
 		end
 
 		if other_debuffed_suits[card.ability.extra.suit] == nil then
 			for _, v in ipairs(G.playing_cards) do
-				if v.area ~= G.jokers and v:is_suit(card.ability.extra.suit, true) then
+				if v and v.area ~= G.jokers and v:is_suit(card.ability.extra.suit, true) then
 					if not no_juice then
 						v:juice_up()
 					end
@@ -4891,9 +4915,9 @@ local function dancing_mad()
 end
 
 --NOTE: (Ahmayk) we assume that if this blind related funciton is called,
---then there the card that may need updating
+--then the card passed in may need updating
 --this seems to be called when a suit it changed or if a card otherwise needs a debuff refresh
---may not be 100% reliable, but doing this every frame is a bad performance hit
+--may not be 100% reliable, but doing this every frame is a bad performance hit due to SMODS.get_enhancements()
 local _super_blind_debuff_card = Blind.debuff_card
 function Blind:debuff_card(card, from_blind)
 	_super_blind_debuff_card(self, card, from_blind)
@@ -4902,7 +4926,7 @@ function Blind:debuff_card(card, from_blind)
 		if #dancing_mads > 0 then
 			local debuffed_suits = {}
 			for _, v in ipairs(dancing_mads) do
-				if v.ability.extra.debuffs_active then
+				if v and v.ability.extra.debuffs_active then
 					debuffed_suits[v.ability.extra.suit] = true
 				end
 			end
@@ -4968,9 +4992,6 @@ local function circus()
 		atlas = ATLAS,
 		cost = 9,
 		blueprint_compat = true,
-		loc_vars = function(self, info_queue, card)
-			return { vars = { }, }
-		end,
 		calculate = function(self, card, context)
 			if context.before and not context.blueprint then
 
@@ -5092,7 +5113,7 @@ local function pomni()
 
 	--NOTE: (Ahmayk) this is a modified version of card:explode()
 	local function pomni_transform(card, joker_center_to_transform, transform_message, sound, pitch, level)
-		local explode_time = 1.3*(explode_time_fac or 1)*(math.sqrt(G.SETTINGS.GAMESPEED))
+		local explode_time = 1.3*(math.sqrt(G.SETTINGS.GAMESPEED))
 		card.dissolve = 0
 		--NOTE: (Ahmayk) colors from pomni card art
 		local transform_colors = {{1,1,1,0.8}, HEX("8166CF"), HEX("F63851"), HEX("F6D228")}
@@ -5245,16 +5266,17 @@ local function pomni()
 							area = G.jokers,
 							key = "j_qualatro_pomni",
 						})
+						if new_pomni then
+							if card.ability.extra.block_selling then
+								new_pomni.ability.extra.block_selling = true
+							end
+							new_pomni:add_to_deck()
 
-						if card.ability.extra.block_selling then
-							new_pomni.ability.extra.block_selling = true
+							G.jokers:emplace(new_pomni)
+							play_sound('cancel')
+							card_eval_status_text(new_pomni, 'extra', nil, nil, nil,
+								{ message = localize("qua_trapped_ex"), colour = G.C.RED })
 						end
-						new_pomni:add_to_deck()
-
-						G.jokers:emplace(new_pomni)
-						play_sound('cancel')
-						card_eval_status_text(new_pomni, 'extra', nil, nil, nil, {message = localize("qua_trapped_ex"), colour = G.C.RED})
-
 						return true end)
 					}))
 			end
@@ -5308,7 +5330,7 @@ local function pomni()
 								delay = 3,
 								blocking = true,
 								func = (function()
-									joker_center_to_transform = G.P_CENTERS["j_abstract"] or G.P_CENTERS["j_joker"]
+									local joker_center_to_transform = G.P_CENTERS["j_abstract"] or G.P_CENTERS["j_joker"]
 									pomni_transform(card_to_transform, joker_center_to_transform, localize('qua_abstracted_ex'), 'cancel', 1, 1)
 									return true end)
 								}))
@@ -5378,9 +5400,12 @@ end
 local function takeover_doover()
 
 	local function takeover_is_valid()
-		return G.GAME.blind and
+		return G.GAME and 
+			G.GAME.blind and
 			G.GAME.blind.name ~= '' and
 			G.GAME.blind.blind_set and
+			G.consumeables and
+			G.consumeables.config and
 			#G.consumeables.cards < G.consumeables.config.card_limit
 	end
 
@@ -5398,7 +5423,7 @@ local function takeover_doover()
 		},
 		config = { extra = { copies = 2 } },
 		loc_vars = function(_, info_queue, card)
-			local fool_c = G.GAME.last_consumeable and G.P_CENTERS[G.GAME.last_consumeable] or nil
+			local fool_c = G.GAME and G.GAME.last_consumeable and G.P_CENTERS[G.GAME.last_consumeable] or nil
 			local last_consumeable_string = fool_c and localize{type = 'name_text', key = fool_c.key, set = fool_c.set} or localize('k_none')
 			local colour = G.C.RED
 
@@ -5449,9 +5474,11 @@ local function takeover_doover()
 								func = function()
 									play_sound('timpani')
 									local key = G.GAME.last_consumeable or "c_fool"
-									local card = create_card(nil, G.consumeables, nil, nil, nil, nil, key, 'fools')
-									card:add_to_deck()
-									G.consumeables:emplace(card)
+									local card_new = create_card(nil, G.consumeables, nil, nil, nil, nil, key, 'fools')
+									if card_new then
+										card_new:add_to_deck()
+										G.consumeables:emplace(card_new)
+									end
 									return true
 								end
 							}))
@@ -5592,7 +5619,7 @@ local function joper()
 		cost = 5,
 		blueprint_compat = true,
 		calculate = function(_, card, context)
-			if context.individual and context.cardarea == G.hand and not context.end_of_round and context.other_card:get_id() == 12 then
+			if context.individual and context.cardarea == G.hand and not context.end_of_round and context.other_card and context.other_card:get_id() == 12 then
 				return {
 					chips = card.ability.extra.chips,
 					card = context.other_card
@@ -5684,7 +5711,6 @@ local function caramelldansen()
 				context.cardarea == G.play and
 				not context.other_card.debuff
 			then
-				local is_left = true
 				if context.blueprint then
 					if not G.GAME.carameldansen_blueprint_is_left_state then
 						G.GAME.carameldansen_blueprint_is_left_state = {}
@@ -5693,10 +5719,8 @@ local function caramelldansen()
 						G.GAME.carameldansen_blueprint_is_left_state[context.blueprint_card.ID] = true
 					end
 					G.GAME.carameldansen_blueprint_is_left_state[context.blueprint_card.ID] = not G.GAME.carameldansen_blueprint_is_left_state[context.blueprint_card.ID]
-					is_left = G.GAME.carameldansen_blueprint_is_left_state[context.blueprint_card.ID]
 				else
 					card.ability.extra.is_left = not card.ability.extra.is_left
-					is_left = card.ability.extra.is_left
 				end
 				local ret = {
 					card = context.blueprint_card or card,
@@ -5739,7 +5763,7 @@ end
 
 local function polar_star()
 
-	function get_last_hand_played_consecutive_count()
+	local function get_last_hand_played_consecutive_count()
 		local consecutive_plays = 0
 		if G.GAME and G.GAME.qualatro_hands_played_cache then
 			for i = 1, #G.GAME.qualatro_hands_played_cache do
@@ -5807,7 +5831,7 @@ local function polar_star()
 	}
 end
 
-function is_jazzing(consecutive_amount)
+local function is_jazzing(consecutive_amount)
 	local is_jazzing = false 
 	if G.GAME and G.GAME.qualatro_hands_played_cache and #G.GAME.qualatro_hands_played_cache >= consecutive_amount then
 		is_jazzing = true 
@@ -5941,7 +5965,7 @@ end
 
 local function jazz_cats_sphelonious()
 
-	function get_xmult_string(xmult)
+	local function get_xmult_string(xmult)
 		local current_xmult = xmult
 		if xmult ~= 1 then
 			current_xmult = string.format("%.7f", xmult)
@@ -6254,7 +6278,7 @@ local function limited_liability_partnership()
 	}
 end
 
-function format_dollar_string(amount)
+local function format_dollar_string(amount)
 	return (to_big(amount) < to_big(-0.01) and '-' or '') .. localize("$") .. tostring(math.abs(to_big(amount)))
 end
 
@@ -6519,7 +6543,7 @@ end
 --inactive_card_data can be passed into copy_card() as if it were a real card 
 --no guarentees that anything else will work. ducks can only fly so high
 --(I am making fun of duck typing, am very annoyed this is the best solution i think we can do for this)
-function create_inactive_card_data(card)
+local function create_inactive_card_data(card)
 	local inactive_card_data = nil
 	if card then
 		inactive_card_data = {}
@@ -6555,8 +6579,8 @@ local function bites_the_dust()
 		loc_vars = function(self, info_queue, card)
 			local key = self.key
 			local last_destroyed_card_name = ""
-			local colous = {}
-			if G.GAME.last_destroyed_inactive_card_data then
+			local colours = {}
+			if G.GAME and G.GAME.last_destroyed_inactive_card_data then
 				key = self.key .. "_alt"
 				if G.GAME.last_destroyed_inactive_card_data.ability.name == 'Stone Card' then
 					colours = {G.C.IMPORTANT}
@@ -6666,11 +6690,14 @@ local function etika_reveal()
 	end
 
 	local function etika_create_quad(atlas, pos)
-		local quad = love.graphics.newQuad(
-			pos.x*atlas.px,
-			pos.y*atlas.py,
-			atlas.px,
-			atlas.py, atlas.image:getDimensions())
+		local quad = nil
+		if atlas and pos then
+			quad = love.graphics.newQuad(
+				pos.x * atlas.px,
+				pos.y * atlas.py,
+				atlas.px,
+				atlas.py, atlas.image:getDimensions())
+		end
 		return quad
 	end
 
@@ -6689,52 +6716,71 @@ local function etika_reveal()
 			local etika_center = card.config.center
 			local etika_atlas = G.ASSET_ATLAS[etika_center.atlas or 'Joker']
 			local etika_quad = etika_create_quad(etika_atlas, etika_sprite_pos)
-			local etika_quad_border = etika_create_quad(etika_atlas, {x = 20, y = 0})
 
-			local other_atlas = G.ASSET_ATLAS[other_center.atlas or 'Joker']
-			local other_quad = etika_create_quad(other_atlas, other_center.pos)
-			local other_quad_soul = nil
-			if other_center.soul_pos then
-				other_quad_soul = etika_create_quad(other_atlas, other_center.soul_pos)
+			if etika_quad then
+
+				local etika_quad_border = etika_create_quad(etika_atlas, { x = 20, y = 0 })
+
+				local other_atlas = G.ASSET_ATLAS[other_center.atlas or 'Joker']
+				local other_quad = etika_create_quad(other_atlas, other_center.pos)
+				local other_quad_soul = nil
+				if other_center.soul_pos then
+					other_quad_soul = etika_create_quad(other_atlas, other_center.soul_pos)
+				end
+
+				local x, y, w, h = etika_quad:getViewport()
+				--NOTE: (Ahmayk) Needs to be x2 as big to look right
+				local scaling = 2
+				w = w * scaling 
+				h = h * scaling
+				local border_width = w * (2/69)
+				local scratch_canvas = love.graphics.newCanvas(w, h, {type = '2d', readable = true})
+				scratch_canvas:setFilter('linear', 'linear')
+				love.graphics.setCanvas(scratch_canvas)
+				love.graphics.clear(0, 0, 0, 1)
+				love.graphics.setColor(G.C.WHITE)
+				if etika_quad then
+					love.graphics.draw(etika_atlas.image, etika_quad, 0, 0, 0, 1*scaling, 1*scaling)
+				end
+				if other_quad then
+					love.graphics.draw(other_atlas.image, other_quad, w / 2 - border_width, border_width, 0, 0.5*scaling, 0.5*scaling)
+				end
+				if other_quad_soul then
+					love.graphics.draw(other_atlas.image, other_quad_soul, w / 2 - border_width, border_width, 0, 0.5*scaling, 0.5*scaling)
+				end
+				if etika_quad_border then
+					love.graphics.draw(etika_atlas.image, etika_quad_border, 0, 0, 0, 1*scaling, 1*scaling)
+				end
+				love.graphics.setCanvas()
+				local canvas_image_data = scratch_canvas:newImageData()
+				scratch_canvas:release()
+
+				etikaAtlas = {}
+				etikaAtlas.name = atlas_name
+				etikaAtlas.image = love.graphics.newImage(canvas_image_data, { mipmaps = true, dpiscale = 1 })
+				etikaAtlas.px = w
+				etikaAtlas.py = h
+
+				canvas_image_data:release()
+
+				G.etika_atlas_cache[atlas_name] = etikaAtlas
+
+				local mipmap_level = SMODS.config.graphics_mipmap_level_options[SMODS.config.graphics_mipmap_level]
+				if mipmap_level and mipmap_level > 0 then
+					etikaAtlas.image:setMipmapFilter('linear', mipmap_level)
+				end
 			end
-
-			local x, y, w, h = etika_quad:getViewport()
-			--NOTE: (Ahmayk) Needs to be x2 as big to look right
-			local scaling = 2
-			w = w * scaling 
-			h = h * scaling
-			local border_width = w * (2/69)
-			local scratch_canvas = love.graphics.newCanvas(w, h, {type = '2d', readable = true})
-			scratch_canvas:setFilter('linear', 'linear')
-			love.graphics.setCanvas(scratch_canvas)
-			--love.graphics.clear(0, 0, 0, 1)
-			love.graphics.setColor(G.C.WHITE)
-			love.graphics.draw(etika_atlas.image, etika_quad, 0, 0, 0, 1*scaling, 1*scaling)
-			love.graphics.draw(other_atlas.image, other_quad, w / 2 - border_width, border_width, 0, 0.5*scaling, 0.5*scaling)
-			if other_quad_soul then
-				love.graphics.draw(other_atlas.image, other_quad_soul, w / 2 - border_width, border_width, 0, 0.5*scaling, 0.5*scaling)
-			end
-			love.graphics.draw(etika_atlas.image, etika_quad_border, 0, 0, 0, 1*scaling, 1*scaling)
-			love.graphics.setCanvas()
-			local canvas_image_data = scratch_canvas:newImageData()
-
-			etikaAtlas = {}
-			etikaAtlas.name = atlas_name 
-			etikaAtlas.image = love.graphics.newImage(canvas_image_data, {mipmaps = true, dpiscale = 1 })
-			etikaAtlas.px = w
-			etikaAtlas.py = h
-			G.etika_atlas_cache[atlas_name] = etikaAtlas
-
-            local mipmap_level = SMODS.config.graphics_mipmap_level_options[SMODS.config.graphics_mipmap_level]
-            if mipmap_level and mipmap_level > 0 then
-                etikaAtlas.image:setMipmapFilter('linear', mipmap_level)
-            end
-
-			scratch_canvas:release()
-			canvas_image_data:release()
 		end
 
-		return Sprite(card.T.x, card.T.y, card.T.w, card.T.h, etikaAtlas)
+		local result = nil
+		if etikaAtlas then
+			result = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, etikaAtlas)
+		else
+			--NOTE: (Ahmayk) shouldn't ever happen in pratice, but just in case
+			result = card.children.center 
+		end
+
+		return result
 	end
 
 	local function etika_look_for_and_get_hype(card_etika, area)
@@ -6746,7 +6792,7 @@ local function etika_reveal()
 		then
 			local hype_joker_key = etika_get_hype_joker_key(card_etika)
 			for _, card in ipairs(area.cards) do
-				if card.config.center.key == hype_joker_key then
+				if card and card.config and card.config.center and card.config.center.key == hype_joker_key then
 					local found_alraedy = false
 					for _, v in ipairs(card_etika.ability.extra.found_hype_ids) do
 						if v == card.ID then
@@ -6812,7 +6858,7 @@ local function etika_reveal()
 		config = { extra = { xmult = 1, bonus_xmult = 0.1, repeat_count = 20, current_repeat = 0, hype_joker_key = nil, found_hype_ids = {} } },
 		loc_vars = function(self, info_queue, card)
 			local hype_joker_key = etika_get_hype_joker_key(card)
-			local joker_name = localize({ type = "name_text", set = "Joker", key = card.ability.extra.hype_joker_key })
+			local joker_name = localize({ type = "name_text", set = "Joker", key = hype_joker_key })
 			return {
 				vars = {
 					card.ability.extra.bonus_xmult,
@@ -7031,8 +7077,8 @@ local function nintendo_power()
 				local has_mult = false
 				for i = 1, #context.full_hand do
 					local enhancements = SMODS.get_enhancements(context.full_hand[i])
-					if enhancements["m_mult"] then has_mult = true end
-					if enhancements["m_bonus"] then has_bonus = true end
+					if enhancements and enhancements["m_mult"] then has_mult = true end
+					if enhancements and enhancements["m_bonus"] then has_bonus = true end
 					if has_bonus and has_mult then
 						card.ability.extra.hand_is_powerful = true
 						break
@@ -7101,7 +7147,7 @@ local function init_donut(i)
 	}
 end
 
-local function dr_andonuts(init_andonuts, init_donuts)
+local function dr_andonuts()
 	local andonuts = SMODS.Joker {
 		key = jokers.dr_andonuts,
 		pos = jokerpos.dr_andonuts,
@@ -7140,6 +7186,7 @@ local function dr_andonuts(init_andonuts, init_donuts)
 		end
 	}
 
+	local donut = nil
 	for i = 1, 4 do
 		donut = init_donut(i)
 	end
@@ -7152,7 +7199,7 @@ end
 
 local function other_donuts()
 	for i = 5, 8 do
-		donut = init_donut(i)
+		init_donut(i)
 	end
 end
 
@@ -7237,7 +7284,7 @@ local function djpk()
 				for i=1, #hand do
 					G.E_MANAGER:add_event(Event({func = function()
 						local card = hand[i]
-						hand[i]:set_base(G.P_CARDS[SMODS.Suits[suit or card.base.suit].card_key..'_K'], true)
+						hand[i]:set_base(G.P_CARDS[SMODS.Suits[card.base.suit].card_key..'_K'], true)
 						return true 
 					end }))
 				end  
@@ -7254,7 +7301,7 @@ local function djpk()
 end
 
 local function cnas()
-	function is_day()
+	local function is_day()
 		local hour = os.date("*t").hour
 		return hour > 5 and hour < 22
 	end
@@ -7281,9 +7328,6 @@ local function cnas()
 		atlas = ATLAS,
 		cost = 5,
 		blueprint_compat = true,
-		in_pool = function(_, args)
-			return not next(SMODS.find_card(jokerkey.siiva_swim))
-		end,
 		calculate = function(_, card, context)
 			if context.individual 
 			and context.cardarea == G.play 
@@ -7297,7 +7341,7 @@ local function cnas()
 			end
 		end,
 		in_pool = function(_, args)
-			return is_day()
+			return is_day() and not next(SMODS.find_card(jokerkey.siiva_swim))
 		end
 	}
 
@@ -7323,9 +7367,6 @@ local function cnas()
 		atlas = ATLAS,
 		cost = 5,
 		blueprint_compat = true,
-		in_pool = function(_, args)
-			return not next(SMODS.find_card(jokerkey.cartoon_gunner))
-		end,
 		calculate = function(_, card, context)
 						if context.individual 
 			and context.cardarea == G.play 
@@ -7339,7 +7380,7 @@ local function cnas()
 			end
 		end,
 		in_pool = function(_, args)
-			return not is_day()
+			return not is_day() and not next(SMODS.find_card(jokerkey.cartoon_gunner))
 		end
 	}
 end
@@ -7488,7 +7529,7 @@ local function mm2wood()
 		config = { extra = { chips = 4 } },
 		loc_vars = function(self, info_queue, card)
 			if
-				G.GAME.blind and (G.GAME.blind.name == 'The Plant' or G.GAME.blind.name == 'Verdant Leaf') and G.GAME.blind.disabled
+				G.GAME and G.GAME.blind and (G.GAME.blind.name == 'The Plant' or G.GAME.blind.name == 'Verdant Leaf') and G.GAME.blind.disabled
 			then
 				return { vars = {
 					card.ability.extra.chips,
@@ -7819,7 +7860,7 @@ end
 -- Register all sounds in the /sounds subdirectory, with their filename as the key.
 SMODS.Sound:register_global()
 
-if debug then
+if is_debug then
 	r = SMODS.restart_game
 end
 
@@ -7836,7 +7877,7 @@ Card.can_sell_card = function(self, context)
 	return ret
 end
 
-function add_to_joker_results_table(cardID)
+local function add_to_joker_results_table(cardID)
 	if not G.GAME.joker_results_table then
 		G.GAME.joker_results_table = {}
 	end
