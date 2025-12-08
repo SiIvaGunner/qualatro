@@ -2982,17 +2982,18 @@ local function antonymph()
 		cost = 7,
 		blueprint_compat = true,
 		calculate = function(_, card, context)
-			if context.individual and context.cardarea == G.play and context.other_card.edition then
+			if context.individual and context.cardarea == G.play and context.other_card and context.other_card.edition then
 				return {
 					chips = card.ability.extra.chips,
 					colour = G.C.CHIPS,
-					card = card,
 				}
 			end
 			if context.other_joker and context.other_joker.edition then
 				return {
 					chips = card.ability.extra.chips,
 					colour = G.C.CHIPS,
+					message_card = context.other_joker,
+					juice_card = card
 				}
 			end
 		end
