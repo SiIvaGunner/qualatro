@@ -17,9 +17,19 @@ match_indent = true
 [[patches]]
 [patches.pattern]
 target = "card.lua"
-pattern = "text = localize('k_nope_ex'),"
+pattern = '''
+attention_text({
+	text = localize('k_nope_ex'),"
+'''
 position = "at"
-payload = "text = localize((G.qualatro_resph_mode_loaded and 'k_nope_ex') or 'qua_what'),"
+payload = '''
+local nope_key = 'k_nope_ex'
+if SMODS.Mods.Qualatro and SMODS.Mods.Qualatro.can_load and not G.qualatro_resph_mode_loaded then
+	nope_key = 'qua_what',
+end
+attention_text({
+	text = localize(nope_key),
+'''
 match_indent = true
 
 # NOTE: (Ahmayk) Replace wheel of fortune sfx with WHAT
@@ -28,7 +38,13 @@ match_indent = true
 target = "card.lua"
 pattern = "play_sound('tarot2', 1, 0.4)"
 position = "at"
-payload = "if G.qualatro_resph_mode_loaded then play_sound('tarot2', 1, 0.4) else play_sound('qualatro_WHAT', 1, 0.4) end"
+payload = '''
+if SMODS.Mods.Qualatro and SMODS.Mods.Qualatro.can_load and not G.qualatro_resph_mode_loaded then
+	play_sound('qualatro_WHAT', 1, 0.4)
+else
+	play_sound('tarot2', 1, 0.4)
+end
+'''
 match_indent = true
 
 
@@ -174,7 +190,7 @@ target = "functions/state_events.lua"
 pattern = "SMODS.calculate_context({full_hand = G.play.cards, scoring_hand = scoring_hand, scoring_name = text, poker_hands = poker_hands, final_scoring_step = true})"
 position = "after"
 payload = '''
-if not G.qualatro_resph_mode_loaded then
+if not G.qualatro_resph_mode_loaded and SMODS.Mods.Qualatro and SMODS.Mods.Qualatro.can_load then
 	for _, area in ipairs(SMODS.get_card_areas('jokers')) do for _, _card in ipairs(area.cards) do
 		local effects = {}
 		for _, _area in ipairs(SMODS.get_card_areas('jokers')) do
@@ -308,7 +324,7 @@ target = 'functions/button_callbacks.lua'
 pattern = "e.config.ref_table:use_consumeable(area)"
 position = "at"
 payload = '''
-if not G.qualatro_resph_mode_loaded then
+if not G.qualatro_resph_mode_loaded and SMODS.Mods.Qualatro.can_load and SMODS.Mods.Qualatro.can_load then
 	local jimmy = {}
 	SMODS.calculate_context({qualatro_using_consumeable = true, consumeable = card, area = card.from_area}, jimmy)
 	local timmy = SMODS.merge_effects(jimmy)

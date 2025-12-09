@@ -10,7 +10,9 @@
 	"badge_text_colour": "FFFFFF",
 	"display_name": "Qualatro",
 	"version": "1.0.3",
-	"dependencies": [],
+	"dependencies": [
+		"Steamodded (>=1.0.0~BETA-1016c)"
+	],
 	"conflicts": [],
 	"provides": [],
 	"dump_loc": false

@@ -11,7 +11,12 @@ pattern = '''
 '''
 position = "at"
 payload = '''
-    local replace_card = Card(self.title_top.T.x, self.title_top.T.y, 0.95*G.CARD_W*SC_scale, 0.95*G.CARD_H*SC_scale, G.P_CENTERS['j_qualatro_grand_dad'], G.P_CENTERS['j_qualatro_grand_dad'])
+    local replace_card = nil 
+	if SMODS.Mods.Qualatro and SMODS.Mods.Qualatro.can_load then
+		replace_card = Card(self.title_top.T.x, self.title_top.T.y, 0.95*G.CARD_W*SC_scale, 0.95*G.CARD_H*SC_scale, G.P_CENTERS['j_qualatro_grand_dad'], G.P_CENTERS['j_qualatro_grand_dad'])
+	else
+    	replace_card = Card(self.title_top.T.x, self.title_top.T.y, 1.2*G.CARD_W*SC_scale, 1.2*G.CARD_H*SC_scale, G.P_CARDS.S_A, G.P_CENTERS.c_base)
+	end
 '''
 match_indent = true
 
@@ -23,7 +28,11 @@ pattern = '''
 '''
 position = "at"
 payload = '''
-SC = Card(G.ROOM.T.w/2 - SC_scale*G.CARD_W/2, 10. + G.ROOM.T.h/2 - SC_scale*G.CARD_H/2, SC_scale*G.CARD_W, SC_scale*G.CARD_H, G.P_CENTERS['j_qualatro_grand_dad'], G.P_CENTERS['j_qualatro_grand_dad'])
+	if SMODS.Mods.Qualatro and SMODS.Mods.Qualatro.can_load then
+		SC = Card(G.ROOM.T.w/2 - SC_scale*G.CARD_W/2, 10. + G.ROOM.T.h/2 - SC_scale*G.CARD_H/2, SC_scale*G.CARD_W, SC_scale*G.CARD_H, G.P_CENTERS['j_qualatro_grand_dad'], G.P_CENTERS['j_qualatro_grand_dad'])
+	else
+		SC = Card(G.ROOM.T.w/2 - SC_scale*G.CARD_W/2, 10. + G.ROOM.T.h/2 - SC_scale*G.CARD_H/2, SC_scale*G.CARD_W, SC_scale*G.CARD_H, G.P_CARDS.empty, G.P_CENTERS['j_joker'])
+	end
 '''
 match_indent = true
 
@@ -49,7 +58,7 @@ pattern = '''
 '''
 position = "after"
 payload = '''
-    if self.config.type == 'title' and self == G.title_top then
+    if SMODS.Mods.Qualatro and SMODS.Mods.Qualatro.can_load and self.config.type == 'title' and self == G.title_top then
         for k, card in ipairs(self.cards) do
             if card.states.drag.is then 
 				card.T.r = 0
