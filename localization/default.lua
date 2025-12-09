@@ -245,7 +245,7 @@ return {
 				'Play using only {C:attention}Qualatro{} Jokers',
 			},
             ch_c_bypass_unlocks = {
-				'Cards are discovered when obtained.',
+				'Cards are discovered when obtained',
 			},
             ch_c_qualatro_seven_challenge = {
                 "Start with {C:attention}7 7{}s",
