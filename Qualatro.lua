@@ -457,14 +457,6 @@ local function joke_explainer()
 		key = jokers.jokex,
 		atlas = ATLAS,
 		pos = jokerpos.jokex,
-		loc_txt = {
-			name = 'JokeXplainer 7000',
-			text = {
-				"Unenhanced {C:attention}7{}s",
-				"become {C:attention}Steel{} cards",
-				"when played",
-			}
-		},
 		config = { extra = {} },
 		loc_vars = function(_, info_queue, card)
 			info_queue[#info_queue+1] = G.P_CENTERS.m_steel
@@ -544,14 +536,6 @@ local function susie()
 	SMODS.Joker {
 		key = jokers.susie,
 		atlas = ATLAS,
-		loc_txt = {
-			name = 'Susie',
-			text = {
-				"Trigger {C:attention}held in hand{}",
-				"effects for the top",
-				"{C:attention}#1#{} cards in deck"
-			}
-		},
 		config = { extra = { deck_hand_size = 5 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.deck_hand_size } }
@@ -636,16 +620,6 @@ local function grand_dad()
 	SMODS.Joker {
 		key = jokers.grand_dad,
 		pos = jokerpos.grand_dad,
-		loc_txt = {
-			name = 'Grand Dad',
-			text = {
-				"Gains {C:red}+#1#{} Mult when each",
-				"played {C:attention}7{} is scored,",
-				"resets if played hand",
-				"doesn't contain a {C:attention}7{}",
-				"{C:inactive}(Currently {C:mult}+#2#{C:inactive} Mult)",
-			}
-		},
 		config = { extra = { bonus = 7 }, mult = 0 },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.bonus, card.ability.mult } }
@@ -700,15 +674,6 @@ end
 local function coconut_gun()
 	SMODS.Joker {
 		key = jokers["coconut_gun"],
-		loc_txt = {
-			name = 'Coconut Gun',
-			text = {
-				"Fires {C:chips}#1#{} Chips in spurts",
-				"{C:green}#3# in #4#{} chance to fire",
-				"{S:0.8}(If not, stores them)",
-				"{C:inactive}(Currently {C:chips}+#2#{C:inactive} Chips)",
-			}
-		},
 		config = { extra = { chips = 100, stored = 0, odds = 3 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = {
@@ -747,13 +712,6 @@ local function slip_n_slide()
 		atlas = ATLAS,
 		key = jokers.slip_n_slide,
 		pos = jokerpos.slip_n_slide,
-		loc_txt = {
-			name = "Slip n' Slide",
-			text = {
-				"{X:mult,C:white} X#1# {} Mult if played hand",
-				"contains exactly {C:attention}1{} card"
-			}
-		},
 		config = { extra = { xmult = 4 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.xmult } }
@@ -785,13 +743,6 @@ local function familiar_photo()
 			w = 71,
 			h = 80
 		},
-		loc_txt = {
-			name = "Familiar Photo",
-			text = {
-				"{X:mult,C:white} X#1# {} Mult if there are",
-				"exactly {C:attention}3{} other Jokers"
-			}
-		},
 		config = {
 			extra = { xmult = 3 }
 		},
@@ -821,14 +772,6 @@ local function reader()
 		atlas = ATLAS,
 		key = jokers.reader,
 		pos = jokerpos.reader,
-		loc_txt = {
-			name = "Reader",
-			text = {
-				"Played {C:attention}3{}s and {C:attention}4{}s",
-				"give {C:chips}+#1#{} Chips",
-				"{C:chips,s:0.8}Best {}{C:purple,s:0.8}bro{}{s:0.8} of {}{C:green,s:0.8}Jerome{}"
-			}
-		},
 		no_pool_flag = 'reader_and_jerome_fused',
 		config = { extra = { chips = 30, odds = 8 } },
 		loc_vars = function(_, info_queue, card)
@@ -942,14 +885,6 @@ local function jerome()
 		atlas = ATLAS,
 		key = jokers.jerome,
 		pos = jokerpos.jerome,
-		loc_txt = {
-			name = "Jerome",
-			text = {
-				"Played {C:attention}3{}s and {C:attention}4{}s",
-				"give {C:mult}+#1#{} Mult",
-				"{C:green,s:0.8}Actual brother{}{s:0.8} of {}{C:chips,s:0.8}Rea{}{C:purple,s:0.8}der{}"
-			}
-		},
 		no_pool_flag = 'reader_and_jerome_fused',
 		config = { extra = { mult = 4 } },
 		loc_vars = function(_, info_queue, card)
@@ -975,17 +910,6 @@ local function beader_and_berome()
 		key = jokers.beader_and_berome,
 		pos = jokerpos.beader_and_berome,
 		soul_pos = jokerpos.beader_and_berome_soul,
-		loc_txt = {
-			name = "Beader and Berome",
-			text = {
-				"{C:green}#2# in #1#{} chance to",
-				"keep used consumable"
-			},
-			unlock = {
-				"Embrace the power of being",
-				"best bros and actual brothers"
-			}
-		},
 		unlocked = false,
 		yes_pool_flag = 'never',
 		config = { extra = { temp_created = 0, odds = 7 } },
@@ -1012,15 +936,6 @@ local function fools_spirit()
 	SMODS.Joker {
 		key = jokers.fools_spirit,
 		pos = jokerpos.fools_spirit,
-		loc_txt = {
-			name = "Fools' Spirit",
-			text = {
-				"When {C:attention}Blind{} is selected,",
-				"{C:green}#2# in #1#{} chance to create the",
-				"last {C:tarot}Tarot{} or {C:planet}Planet{} card",
-				"used during this run"
-			}
-		},
 		config = { extra = { odds = 2 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.odds or 2, G.GAME.probabilities.normal or 1 } }
@@ -1055,16 +970,6 @@ local function siiva()
 		key = jokers.siivagunner,
 		pos = jokerpos.siivagunner,
 		soul_pos = jokerpos.siivagunner_soul,
-		loc_txt = {
-			name = "SiIvaGunner",
-			text = {
-				"{C:attention}Stone{} cards give",
-				"{C:red}+#1#{} Mult and {X:mult,C:white} X#2# {} Mult"
-			},
-			unlock = {
-				"{E:1,s:1.3}?????"
-			}
-		},
 		config = { extra = { mult = 7, xmult = 3 } },
 		loc_vars = function(_, info_queue, card)
 			info_queue[#info_queue+1] = G.P_CENTERS.m_stone
@@ -1094,14 +999,6 @@ local function twob()
 		atlas = ATLAS,
 		key = jokers.twob,
 		pos = jokerpos.twob,
-		loc_txt = {
-			name = "2B",
-			text = {
-				"Retrigger each",
-				"played or held",
-				"{C:attention}Steel Card{}"
-			}
-		},
 		config = { extra = { } },
 		loc_vars = function(_, info_queue, card)
 			info_queue[#info_queue+1] = G.P_CENTERS.m_steel
@@ -1129,14 +1026,6 @@ local function haruka()
 	SMODS.Joker {
 		key = jokers.haruka,
 		pos = jokerpos.haruka,
-		loc_txt = {
-			name = "Haruka Amami",
-			text = {
-				"Retrigger",
-				"each played",
-				"{C:attention}7{}, {C:attention}6{}, or {C:attention}5{}"
-			}
-		},
 		config = { extra = { } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { } }
@@ -1164,15 +1053,6 @@ local function christmas_spirit()
 	SMODS.Joker {
 		key = jokers.christmas_spirit,
 		pos = jokerpos.christmas_spirit,
-		loc_txt = {
-			name = "Christmas Spirit",
-			text = {
-				"Add {C:money}$#1#{} of {C:attention}sell value",
-				"to other {C:attention}Jokers{}",
-				"if played hand contains",
-				"a {C:attention}Full House",
-			}
-		},
 		config = { extra = { money = 1 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.money } }
@@ -1214,13 +1094,6 @@ local function dimensional_cape()
 	SMODS.Joker {
 		key = jokers.dimensional_cape,
 		pos = jokerpos.dimensional_cape,
-		loc_txt = {
-			name = "Dimensional Cape",
-			text = {
-				"Played {C:attention}Enhanced{} cards",
-				"earn {C:money}$#1#{} when scored",
-			}
-		},
 		config = { extra = { money = 1 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.money } }
@@ -1249,13 +1122,6 @@ local function siiva_ai()
 	SMODS.Joker {
 		key = jokers.siiva_ai,
 		pos = jokerpos.siiva_ai,
-		loc_txt = {
-			name = "SiIvaGunner AI",
-			text = {
-				"{C:attention}Stone{} cards are",
-				"considered {C:attention}Steel{} cards",
-			}
-		},
 		config = { extra = { xmult = 1.5, chips = 50 } },
 		loc_vars = function(_, info_queue, card)
 			info_queue[#info_queue+1] = G.P_CENTERS.m_stone
@@ -1366,16 +1232,6 @@ local function inspector_gadget()
 	SMODS.Joker {
 		key = jokers.inspector_gadget,
 		pos = jokerpos.inspector_gadget,
-		loc_txt = {
-			name = "Inspector Gadget",
-			text = {
-				"{C:blue}+#1#{} hands for each",
-				"time the least played",
-				"Hand has been played",
-				"{C:inactive,s:0.8}(Currently {}{C:blue,s:0.8}+#2#{}{C:inactive,s:0.8} Hands)",
-				"{C:purple,s:0.8}#3#{}{C:inactive,s:0.8} #4# {C:attention,s:0.8}Ogg{}"
-			}
-		},
 		config = { extra = { bonus = 1, extra_hands = 0 } },
 		loc_vars = function(_, info_queue, card)
 			local is_buffed = next(SMODS.find_card(jokerkey.ogg))
@@ -1417,16 +1273,6 @@ local function ogg()
 	SMODS.Joker {
 		key = jokers.ogg,
 		pos = jokerpos.ogg,
-		loc_txt = {
-			name = "Ogg",
-			text = {
-				"{C:red}+#1#{} discards for each",
-				"time the least played",
-				"Hand has been played",
-				"{C:inactive,s:0.8}(Currently {}{C:red,s:0.8}+#2#{}{C:inactive,s:0.8} Discards)",
-				"{C:purple,s:0.8}#3#{}{C:inactive,s:0.8} #4# {C:attention,s:0.8}Inspector Gadget{}"
-			}
-		},
 		config = { extra = { bonus = 1, extra_discards = 0 } },
 		loc_vars = function(_, info_queue, card)
 			local is_buffed = next(SMODS.find_card(jokerkey.inspector_gadget))
@@ -1467,16 +1313,6 @@ local function genocide_chad()
 	SMODS.Joker {
 		key = jokers.genocide_chad,
 		pos = jokerpos.genocide_chad,
-		loc_txt = {
-			name = "Chad Warden",
-			text = {
-				"After a {C:attention}Blind{} is skipped,",
-				"{C:red}destroy{} all other Jokers",
-				"at the start of next {C:attention}Blind",
-				"and gain {X:mult,C:white} X#1# {} Mult for each",
-				"{C:inactive}(Currently {X:mult,C:white} X#2# {C:inactive} Mult)",
-			}
-		},
 		config = { extra = { bonus = 0.5, skipped = false }, x_mult = 1 },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.bonus, card.ability.x_mult } }
@@ -1543,13 +1379,6 @@ local function golden_necklace()
 	SMODS.Joker {
 		key = jokers.golden_necklace,
 		pos = jokerpos.golden_necklace,
-		loc_txt = {
-			name = "Golden Necklace",
-			text = {
-				"Each played {C:attention}8{}",
-				"gives {C:money}$#1#{} when scored",
-			}
-		},
 		config = { extra = { money = 2 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.money } }
@@ -1578,15 +1407,6 @@ local function spectrogram()
 	SMODS.Joker {
 		key = jokers.spectrogram,
 		pos = jokerpos.spectrogram,
-		loc_txt = {
-			name = "Spectrogram",
-			text = {
-				"This Joker gains {C:chips}#2#{} Chips",
-				"every time a {C:attention}playing card{}",
-				"is added to your deck",
-				"{C:inactive}(Currently {C:chips}+#1#{} Chips)",
-			}
-		},
 		config = { extra = { chips = 0, chip_mod = 10 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.chips, card.ability.extra.chip_mod } }
@@ -1617,14 +1437,6 @@ local function cat_mask()
 	SMODS.Joker {
 		key = jokers.cat_mask,
 		pos = jokerpos.cat_mask,
-		loc_txt = {
-			name = "Cat Mask",
-			text = {
-				"Sell this card to cut",
-				"the current {C:attention}Blind{}'s",
-				"required {C:chips}Chips{} in {C:attention}half"
-			}
-		},
 		cry_credits = {
 			idea = { P.dda },
 			art = { P.dda },
@@ -1662,14 +1474,6 @@ local function word_whammer()
 		pixel_size = {
 			w = 64,
 			h = 95
-		},
-		loc_txt = {
-			name = "LeapFrog Word Whammer Fridge Phonics Set",
-			text = {
-				"{C:red}+#1#{} Mult if scored cards",
-				"in hand contains exactly {C:attention}3{}",
-				"{C:attention}Aces{} and/or {C:attention}face{} cards"
-			}
 		},
 		cry_credits = {
 			idea = {},
@@ -1710,16 +1514,6 @@ local function final_goodbye()
 		atlas = ATLAS,
 		key = jokers.final_goodbye,
 		pos = jokerpos.final_goodbye,
-		loc_txt = {
-			name = "Final Goodbye",
-			text = {
-				"Before {C:red}death{}, gain",
-				"{C:blue}+1{} hand and draw",
-				"all cards in deck",
-				"{S:1.1,C:red,E:2}permanently",
-				"{S:1.1,C:red,E:2}self destructs",
-			}
-		},
 		cry_credits = {
 			idea = {},
 			art = { P.party_rock },
@@ -1819,12 +1613,6 @@ local function hypercam()
 		atlas = ATLAS,
 		key = jokers.hypercam,
 		pos = jokerpos.hypercam,
-		loc_txt = {
-			name = "Unregistered HyperCam 2",
-			text = {
-				"all common jokers r free"
-			}
-		},
 		cry_credits = {
 			idea = {},
 			art = { P.party_rock },
@@ -1855,15 +1643,6 @@ local function christmas_in_july()
 	SMODS.Joker {
 		key = jokers.christmas_in_july,
 		pos = jokerpos.christmas_in_july,
-		loc_txt = {
-			name = "Christmas in July",
-			text = {
-					"{C:attention}Everything's on sale!{}",
-					"Debuffs when leaving",
-					"the {C:attention}shop{} if nothing",
-					"was {C:attention}purchased{}",
-			}
-		},
 		config = { extra = { something_bought_this_shop = false } },
 		loc_vars = function(self, info_queue, card)
 			return { vars = {  }, }
@@ -1920,15 +1699,6 @@ local function eight_bit_beast()
 		atlas = ATLAS,
 		key = jokers.eight_bit_beast,
 		pos = jokerpos.eight_bit_beast,
-		loc_txt = {
-			name = "8-Bit Beast",
-			text = {
-				"Played cards gain",
-				"a random {C:attention}Enhancement{}",
-				"if hand contains",
-				"a {C:attention}Full House"
-			}
-		},
 		cry_credits = {
 			idea = {},
 			art = { P.party_rock },
@@ -1985,14 +1755,6 @@ local function hot_cross_buns()
 	SMODS.Joker {
 		key = jokers.hot_cross_buns,
 		pos = jokerpos.hot_cross_buns,
-		loc_txt = {
-			name = 'Hot Cross Buns',
-			text = {
-				"Next {C:attention}#2#{} scoring",
-				"{C:attention}Aces{} and {C:attention}2{}s",
-				"permanently gain {C:money}$#1#{}",
-			}
-		},
 		config = { extra = { money = 1, left = 10 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { 
@@ -2033,12 +1795,6 @@ local function beta_mix()
 	SMODS.Joker {
 		key = jokers.beta_mix,
 		pos = jokerpos.beta_mix,
-		loc_txt = {
-			name = "(Beta Mix)",
-			text = {
-				"{C:chips}+#1#{} Chips"
-			},
-		},
 		config = { extra = { chips = 40, x_mult = 4 } },
 		loc_vars = function(self, info_queue, card)
 			if
@@ -2184,14 +1940,6 @@ local function papyrus()
 	SMODS.Joker {
 		key = jokers.papyrus,
 		pos = jokerpos.papyrus,
-		loc_txt = {
-			name = "Papyrus",
-			text = {
-				"{C:red}+#1#{} Mult if cards in hand",
-				"are not reordered",
-				"{C:inactive}(Currently #2#){}",
-			}
-		},
 		config = { mult = 15, extra = { active = true, has_said_active_text_once = false } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = {
@@ -2307,14 +2055,6 @@ local function lady()
 	SMODS.Joker {
 		key = jokers.lady,
 		pos = jokerpos.lady,
-		loc_txt = {
-			name = "Lady",
-			text = {
-				"Unenhanced cards in hand",
-				"become {C:attention}Gold{} if played hand",
-				"has exactly three {C:attention}6{}s"
-			}
-		},
 		cry_credits = {
 			idea = {},
 			art = { P.party_rock },
@@ -2365,15 +2105,6 @@ local function cryptid_hunt()
 	SMODS.Joker {
 		key = jokers.cryptid_hunt,
 		pos = jokerpos.cryptid_hunt,
-		loc_txt = {
-			name = "Cryptid Hunt",
-			text = {
-				"{C:spectral}Spectral Packs{} appear {C:attention}#1#X{}",
-				"more often in the shop",
-				"{C:spectral}Cryptid{} is {C:attention}guaranteed{}",
-				"in {C:spectral}Spectral Packs{}"
-			}
-		},
 		-- Only one of these will be used, determined by balance.
 		-- Multiplier: 3 Cryptid Hunts give 2 x 2 x 2 = 8x rate
 		-- Add to Multiplier: 3 Cryptid Hunts give 1 base + 1 + 1 + 1 = 4x rate
@@ -2423,18 +2154,6 @@ local function slider()
 	SMODS.Joker {
 		key = jokers.slider,
 		pos = jokerpos.slider,
-		loc_txt = {
-			name = "Slider",
-			text = {
-				-- "Non-retroactive scaling",
-				-- "{C:blue}+Chips{} and {C:red}+Mult{} Jokers have a",
-				-- "{C:green}#1# in #2#{} chance to scale again",
-				"{C:green}#1# in #2#{} chance to",
-				"retrigger a {C:attention}Joker{}",
-				"when it gains",
-				"{C:blue}+Chips{} or {C:red}+Mult{}"
-			}
-		},
 		config = { extra = { odds = 3 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { G.GAME.probabilities.normal or 1, card.ability.extra.odds } }
@@ -2797,14 +2516,6 @@ local function stingy()
 	SMODS.Joker {
 		key = jokers.stingy,
 		pos = jokerpos.stingy,
-		loc_txt = {
-			name = "Stingy",
-			text = {
-				"When entering the {C:attention}shop{},",
-				"something in it becomes {C:money}his{}",
-				"{C:inactive}(Must have room){}",
-			}
-		},
 		config = { extra = { queued_this_shop = false } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = {} }
@@ -2889,10 +2600,6 @@ local function stingy()
 
 	SMODS.Sticker {
 		key = "stingy",
-		loc_txt = {
-			name = "Stingy's Card",
-			text = {"This card", "is {C:attention}MINE!{}"}
-		},
 		atlas = "QualatroStickers",
 		pos = { x = 0, y = 0 },
 		sets = {
@@ -2926,13 +2633,6 @@ local function get_lucky()
 	SMODS.Joker {
 		key = jokers.get_lucky,
 		pos = jokerpos.get_lucky,
-		loc_txt = {
-			name = "Get Lucky",
-			text = {
-				"{C:green}#2# in #1#{} chance to",
-				"retrigger {C:attention}Lucky{} cards"
-			}
-		},
 		config = { extra = { odds = 2 } },
 		loc_vars = function(_, info_queue, card)
 			info_queue[#info_queue+1] = G.P_CENTERS.m_lucky
@@ -2963,14 +2663,6 @@ local function antonymph()
 	SMODS.Joker {
 		key = jokers.antonymph,
 		pos = jokerpos.antonymph,
-		loc_txt = {
-			name = "The Antonymph",
-			text = {
-				"{C:attention}Jokers{} and scored cards",
-				"with {C:dark_edition}Editions{}",
-				"give {C:chips}+#1#{} Chips"
-			}
-		},
 		config = { extra = { chips = 60} },
 		loc_vars = function(_, info_queue, card)
 			return { vars = {
@@ -3005,13 +2697,6 @@ local function haltmann()
 	SMODS.Joker {
 		key = jokers.haltmann,
 		pos = jokerpos.haltmann,
-		loc_txt = {
-			name = "Haltmann's Bill",
-			text = {
-				"Earn {C:money}Blind reward{}",
-				"{C:money}money{} again",
-			}
-		},
 		config = { },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { } }
@@ -3037,16 +2722,6 @@ local function ride_the_raft()
 	SMODS.Joker {
 		key = jokers.ride_the_raft,
 		pos = jokerpos.ride_the_raft,
-		loc_txt = {
-			name = "Ride the Raft",
-			text = {
-				"This Joker gains {C:chips}+#2#{} Chips",
-				"per {C:attention}consecutive{} hand",
-				"played without a",
-				"scoring {C:attention}face{} card",
-				"{C:inactive}(Currently {C:chips}+#1#{C:inactive} Chips)",
-			}
-		},
 		config = { extra = { chips = 0, chip_mod = 6 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.chips, card.ability.extra.chip_mod } }
@@ -3148,17 +2823,6 @@ local function lost_media()
 	SMODS.Joker {
 		key = jokers.jokex_lost_media,
 		pos = jokerpos.jokex_lost_media,
-		loc_txt = {
-			name = "Lost Media",
-			text = {
-				"This Joker gains {X:mult,C:white} X#1# {} Mult for",
-				"every {C:attention}rank{} missing from your deck",
-				"{C:inactive}(Currently{} {X:mult,C:white} X#2# {} {C:inactive}Mult){}",
-				-- "{C:inactive,s:0.8}(Missing ranks: #3#){}",
-				-- "This Joker is {C:red,E2}permanently removed{}",
-				-- "from the shop when obtained",
-			}
-		},
 		config = { extra = {
 			xmult_scale = 0.5,
 			xmult = 1,
@@ -3196,14 +2860,6 @@ local function king_for_eternity()
 	SMODS.Joker {
 		key = jokers.king_for_eternity,
 		pos = jokerpos.king_for_eternity,
-		loc_txt = {
-			name = "King for Eternity",
-			text = {
-				"Jokers with {C:dark_edition}editions{}",
-				"give {X:mult,C:white} X#1# {} Mult",
-				"and {C:attention}cannot be sold{}"
-			}
-		},
 		config = { extra = { x_mult = 1.5 }},
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.x_mult } }
@@ -3227,14 +2883,6 @@ local function galaxia()
 	SMODS.Joker {
 		key = jokers.galaxia,
 		pos = jokerpos.galaxia,
-		loc_txt = {
-			name = "Galaxia",
-			text = {
-				"This Joker gains {X:mult,C:white} X#2# {} Mult",
-				"when {C:attention}Boss Blind{} is defeated",
-				"{C:inactive}(Currently {X:mult,C:white} X#1# {C:inactive} Mult)",
-			}
-		},
 
 		config = { x_mult = 1, extra = { xmult_scale = 0.5, } },
 		loc_vars = function(_, info_queue, card)
@@ -3268,15 +2916,6 @@ local function smashup()
 	SMODS.Joker {
 		key = jokers.smashup,
 		pos = jokerpos.smashup,
-		loc_txt = {
-			name = 'SmashUp!',
-			text = {
-				"This {C:attention}Joker{} gains {C:red}+#1#{} Mult",
-				"for every consumable {C:attention}sold{}",
-				"during a {C:attention}Blind{}",
-				"{C:inactive}(Currently {C:mult}+#2#{C:inactive} Mult)",
-			}
-		},
 		config = { extra = { bonus = 3 }, mult = 0 },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.bonus, card.ability.mult } }
@@ -3311,15 +2950,6 @@ local function othello_world()
 		atlas = ATLAS,
 		key = jokers.othello_world,
 		pos = jokerpos.othello_world,
-		loc_txt = {
-			name = "Othello World",
-			text = {
-				"{X:mult,C:white} XMult {} equal to",
-				"base {C:chips}Chips{} multiplier",
-				"of current {C:attention}Blind{}",
-				"{C:inactive}(Currently {X:mult,C:white} X#1# {C:inactive} Mult)",
-			}
-		},
 		config = { extra = { } },
 		loc_vars = function(_, info_queue, card)
 			local mult = 1
@@ -3348,13 +2978,6 @@ local function onetwo_jump()
 	SMODS.Joker {
 		key = jokers.onetwo_jump,
 		pos = jokerpos.onetwo_jump,
-		loc_txt = {
-			name = '1, 2, Joker!',
-			text = {
-				"Played {C:attention}Aces{} and {C:attention}2{}s",
-				"give {X:mult,C:white} X#1# {} Mult",
-			}
-		},
 		config = { extra = { xmult = 1.25 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.xmult } }
@@ -3382,15 +3005,6 @@ local function gegagedigedagedago()
 		atlas = ATLAS,
 		key = jokers.gegagedigedagedago,
 		pos = jokerpos.gegagedigedagedago,
-		loc_txt = {
-			name = "Gegagedigedagedago",
-			text = {
-				"At end of hand, {C:green}#2# in #1#{}",
-				"chance to add a random",
-				"{C:dark_edition}edition{} to any random card",
-				"{S:1.1,C:red,E:2}self destructs{}",
-			}
-		},
 		config = { extra = { odds = 4 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.odds or 4, G.GAME.probabilities.normal or 1 } }
@@ -3514,15 +3128,6 @@ local function nico_nico()
 		key = jokers.nico_nico,
 		pos = jokerpos.nico_nico,
 		--NOTE: (Ahmayk) Stretch goal: have this info be displayed in the balatro japanese font with japanese title
-		loc_txt = {
-			name = "Nico Nico",
-			text = {
-				"{C:tarot}Tarot{} cards that",
-				"{C:attention}enhance{} or {C:attention}convert{}",
-				"can select {C:attention}+1{} card",
-				"{C:inactive,s:0.7}(Death and Hanged Man excluded)",
-			}
-		},
 		config = { extra = { } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = {  } }
@@ -3547,14 +3152,6 @@ local function poke_party()
 		atlas = ATLAS,
 		key = jokers.poke_party,
 		pos = jokerpos.poke_party,
-		loc_txt = {
-			name = "Poké Party",
-			text = {
-				"{C:chips}+#1#{} Chips per {C:attention}unique{}",
-				"Joker acquired this run",
-				"{C:inactive}(Currently {C:chips}+#2#{C:inactive} Chips){}",
-			}
-		},
 		config = { extra = { chips_mod = 5 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = {
@@ -3606,17 +3203,6 @@ local function reverb()
 	SMODS.Joker {
 		key = jokers.reverb,
 		pos = jokerpos.reverb,
-		loc_txt = {
-			name = 'Reverberation',
-			text = {
-				"{C:attention}Final{} played scoring card has a",
-				"{C:green}#1# in #2#{} chance to retrigger",
-				"{C:green,s:0.7}#1# in #3#{}{C:inactive,s:0.7} chance to retrigger{}",
-				"{C:green,s:0.5}#1# in #4#{}{C:inactive,s:0.5} chance to retrigger{}",
-				"{C:green,s:0.3}#1# in #5#{}{C:inactive,s:0.3} chance to retrigger{}",
-				"{C:green,s:0.1}#1# in #6#{}{C:inactive,s:0.1} chance to retrigger{}",
-			}
-		},
 		config = { extra = { base_odds = 2 } },
 		loc_vars = function(_, info_queue, card)
 			local odds = math.max(card.ability.extra.base_odds, 1 + 1e-5)
@@ -3670,13 +3256,6 @@ local function gadget_room()
 		atlas = ATLAS,
 		key = jokers.gadget_room,
 		pos = jokerpos.gadget_room,
-		loc_txt = {
-			name = "Gadget Room",
-			text = {
-				"Cards in {C:attention}first hand{}",
-				"of round return to {C:attention}deck{}",
-			}
-		},
 		config = { extra = { died = false } },
 		loc_vars = function(self, info_queue, card)
 			return { vars = { }, key = self.key .. (next(SMODS.find_card('j_popcorn')) and '_alt' or '') }
@@ -3918,15 +3497,6 @@ local function wii_shop_channel()
 	SMODS.Joker {
 		key = jokers.wii_shop_channel,
 		pos = jokerpos.wii_shop_channel,
-		loc_txt = {
-			name = "Wii Shop Channel",
-			text = {
-				"{C:chips}+#2#{} Chips per {C:attention}purchase{}",
-				"in the {C:attention}shop{}, resets",
-				"at end of round",
-				"{C:inactive}(Currently {C:chips}+#1#{C:inactive} Chips) ",
-			}
-		},
 		config = { extra = { chips = 0, chip_mod = 15  }},
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.chips or 0, card.ability.extra.chip_mod or 25 } }
@@ -3970,18 +3540,6 @@ local function joker_inside_your_head()
 		key = jokers.joker_inside_your_head,
 		pos = jokerpos.joker_inside_your_head,
 		soul_pos = jokerpos.joker_inside_your_head_soul,
-		loc_txt = {
-			name = 'The Joker Inside Your Head',
-			text = {
-				"If {C:attention}first hand{} of round",
-				"has exactly {C:attention}2{} cards,",
-				"convert the {C:attention}left{} card",
-				"into the {C:attention}right{} card",
-			},
-			unlock = {
-				"{E:1,s:1.3}?????"
-			}
-		},
 		config = { extra = { two = 2, temp_left_card_copy = nil } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.two or 2 } }
@@ -4068,14 +3626,6 @@ local function interior_joker()
 	SMODS.Joker {
 		key = jokers.interior_joker,
 		pos = jokerpos.interior_joker,
-		loc_txt = {
-			name = "Interior Joker",
-			text = {
-				"{C:chips}+#1#{} Chips for each {C:money}$#2#{}",
-				"short of {C:money}$#3#{} you have",
-				"{C:inactive}(Currently {C:chips}#4#{C:inactive} Chips){}",
-			}
-		},
 		config = { extra = {
 			chips = 4, dollars = 1, max_dollars = 25
 		} },
@@ -4146,15 +3696,6 @@ local function crazy_bus()
 	SMODS.Joker {
 		key = jokers.crazy_bus,
 		pos = jokerpos.crazy_bus,
-		loc_txt = {
-			name = "Crazy Bus",
-			text = {
-				"per {C:attention}consecutive{} hand",
-				"played without a scoring {C:attention}#1#{}",
-				"{s:0.8}Rank changes every round{}",
-				"{C:inactive}(Currently {C:mult}#2#{C:inactive} Mult)",
-			}
-		},
 		config = { mult = 0, extra = { chips = 0, current_rank_id = 14 } },
 		loc_vars = function(_, info_queue, card)
 
@@ -4354,16 +3895,6 @@ local function tax_fraud()
 	SMODS.Joker {
 		key = jokers.tax_fraud,
 		pos = jokerpos.tax_fraud,
-		loc_txt = {
-			name = "Ta-Ta-Tax Fraud!",
-			text = {
-				"Always gain the maximum amount",
-				"of {C:money}interest{} at end of round",
-				-- "{C:inactive}(Currently {C:money}$#1#{C:inactive}){}",
-				"Pay {C:attention}50%{} of your {C:money}money{} when",
-				"this Joker is sold or destroyed",
-			}
-		},
 		config = { },
 		blueprint_compat = false,
 		loc_vars = function(_, info_queue, card)
@@ -4410,14 +3941,6 @@ local function kazoo()
 	SMODS.Joker {
 		key = jokers.kazoo,
 		pos = jokerpos.kazoo,
-		loc_txt = {
-			name = "Kazoo",
-			text = {
-				"{C:green}#1# in #2#{} chance to",
-				"copy ability of",
-				"{C:attention}Joker{} to the left"
-			}
-		},
 		config = { extra = { odds = 4, active = false } },
 		rarity = rarity.COMMON,
 		atlas = ATLAS,
@@ -4528,16 +4051,6 @@ local function dian_shi_ma_li()
 		key = jokers.dian_shi_ma_li,
 		atlas = ATLAS,
 		pos = jokerpos.dian_shi_ma_li,
-		loc_txt = {
-			name = "Dian Shi Ma Li",
-			text = {
-				"First three scoring {C:attention}7{}s",
-				"in played hand give:",
-				"1st, {C:chips}+#2#{} Chips",
-				"2nd, {C:chips}+#3#{} Chips",
-				"3rd, {C:mult}+#4#{} Mult"
-			}
-		},
 		cry_credits = {
 			idea = { P.dda },
 			art = { P.party_rock },
@@ -4589,13 +4102,6 @@ local function jokex_replica()
 	SMODS.Joker {
 		key = jokers.jokex_replica,
 		pos = jokerpos.jokex_replica,
-		loc_txt = {
-			name = "Replica",
-			text = {
-				"{C:chips}+#1#{} Chips on {C:attention}final",
-				"{C:attention}hand{} of round",
-			}
-		},
 		config = { extra = { chips = 150 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.chips } }
@@ -4619,14 +4125,6 @@ local function katamari_on_the_rocks()
 	SMODS.Joker {
 		key = jokers.katamari_on_the_rocks,
 		pos = jokerpos.katamari_on_the_rocks,
-		loc_txt = {
-			name = "Katamari On The Rocks",
-			text = {
-				"This Joker gains {C:chips}#2#{} Chip",
-				"for every card scored",
-				"{C:inactive}(Currently {C:chips}+#1#{C:inactive} Chips)",
-			}
-		},
 		config = { extra = { chips = 0, chip_mod = 1 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.chips, card.ability.extra.chip_mod } }
@@ -4685,15 +4183,6 @@ local function planet_b_ball()
 	SMODS.Joker {
 		key = jokers.planet_b_ball,
 		pos = jokerpos.planet_b_ball,
-		loc_txt = {
-			name = 'Planet B Ball',
-			text = {
-				"{C:red}+#1#{} Mult per",
-				"{C:attention}poker hand{} upgraded",
-				"to {C:attention}Level #2#{} or above",
-				"{C:inactive}(Currently {C:mult}+#3#{C:inactive} Mult)",
-			}
-		},
 		config = { extra = { bonus = 5, poker_hand_level = 3, mult = 0 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = {
@@ -4731,17 +4220,6 @@ local function color_war()
 	SMODS.Joker {
 		key = jokers.color_war,
 		pos = jokerpos.color_war,
-		loc_txt = {
-			name = 'Color War',
-			text = {
-				"{C:red}+#1#{} Mult if played hand",
-				"contains a scoring",
-				"{V:1}Hearts{} or {V:2}Diamonds{}",
-				"card and a scoring",
-				"{V:3}Clubs{} or {V:4}Spades{} card",
-				
-			}
-		},
 		config = { mult = 10 },
 		loc_vars = function(_, info_queue, card)
 			return { vars = {
@@ -4853,14 +4331,6 @@ local function dancing_mad()
 	SMODS.Joker {
 		key = jokers.dancing_mad,
 		pos = jokerpos.dancing_mad,
-		loc_txt = {
-			name = 'Dancing Mad',
-			text = {
-				"{C:attention}+#1#{} hand size",
-				"All {V:1}#2#{} cards are {C:attention}debuffed{}",
-				"Suit changes every hand",
-			}
-		},
 		config = { extra = { hand_size = 3, suit = "Spades", has_set_suit_once = false, needs_reset = false, debuffs_active = false } },
 		loc_vars = function(_, info_queue, card)
 
@@ -5003,14 +4473,6 @@ local function circus()
 	SMODS.Joker {
 		key = jokers.circus,
 		pos = jokerpos.circus,
-		loc_txt = {
-			name = "Circus",
-			text = {
-				"Copy the ability of a random",
-				"{C:attention}Joker{} when hand is played",
-				"{C:inactive}(Never selects itself)",
-			}
-		},
 		config = { extra = { copied_joker_id = "", copied_joker_returned = false } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { }}
@@ -5248,13 +4710,6 @@ local function pomni()
 	SMODS.Joker {
 		key = jokers.pomni,
 		pos = jokerpos.pomni,
-		loc_txt = {
-			name = "Pomni",
-			text = {
-				"At end of hand, {C:green}#2# in #1#{}",
-				"chance to transform into a",
-			}
-		},
 		config = { extra = { odds = 4, trapped = true, block_selling = false } },
 		loc_vars = function(_, info_queue, card)
 
@@ -5377,14 +4832,6 @@ local function pizza_roll()
 	SMODS.Joker {
 		key = jokers.pizza_roll,
 		pos = jokerpos.pizza_roll,
-		loc_txt = {
-			name = "Pizza Roll",
-			text = {
-				"{C:red}+#1#{} discards,",
-				"reduces by",
-				"{C:red}#2#{} each round",
-			}
-		},
 		config = { extra = { discards = 3, discard_mod = 1 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.discards, card.ability.extra.discard_mod } }
@@ -5439,15 +4886,6 @@ local function takeover_doover()
 	SMODS.Joker {
 		key = jokers.takeover_doover,
 		pos = jokerpos.takeover_doover,
-		loc_txt = {
-			name = "Takeover Do-over",
-			text = {
-				"Sell this card during a {C:attention}Blind{}",
-				"to create {C:attention}#1#{} copies of your",
-				"last used {C:attention}consumable{}",
-				"{C:inactive}(Must have room){}",
-			}
-		},
 		config = { extra = { copies = 2 } },
 		loc_vars = function(_, info_queue, card)
 			local fool_c = G.GAME and G.GAME.last_consumeable and G.P_CENTERS[G.GAME.last_consumeable] or nil
@@ -5546,15 +4984,6 @@ local function the_bean()
 	SMODS.Joker {
 		key = jokers.the_bean,
 		pos = jokerpos.the_bean,
-		loc_txt = {
-			name = "Green de la Bean",
-			text = {
-				"{C:red}+#1#{} Mult",
-				"{C:green}#2# in #3#{} chance to",
-				"give {X:mult,C:white} X#4# {} Mult, then",
-				"{S:1.1,C:red,E:2}self destructs{}"
-			}
-		},
 		config = { extra = { mult = 5, odds = 5, x_mult = 1000 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = {
@@ -5622,14 +5051,6 @@ local function joper()
 	SMODS.Joker {
 		key = jokers.joper,
 		pos = jokerpos.joper,
-		loc_txt = {
-			name = "jOPer",
-			text = {
-				"Each {C:attention}Queen",
-				"held in hand",
-				"gives {C:chips}+#1#{} Chips"
-			}
-		},
 		cry_credits = {
 			idea = {  },
 			art = { P.party_rock },
@@ -5660,14 +5081,6 @@ local function smoke_explainer()
 	SMODS.Joker {
 		key = jokers.smoke_explainer,
 		pos = jokerpos.smoke_explainer,
-		loc_txt = {
-			name = 'SmokeXplainer 420',
-			text = {
-				"{C:green}#1# in #2#{} chance to upgrade",
-				"{C:attention}High Card{} if played",
-				"poker hand is {C:attention}High Card{}",
-			}
-		},
 		config = { extra = { odds = 2 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = {
@@ -5702,14 +5115,6 @@ local function caramelldansen()
 	SMODS.Joker {
 		key = jokers.caramelldansen,
 		pos = jokerpos.caramelldansen1,
-		loc_txt = {
-			name = "Caramelldansen",
-			text = {
-				"Played cards alternate",
-				"between giving {C:blue}+#1#{} Chips",
-				"and {C:red}+#2#{} Mult when scored",
-			}
-		},
 		config = { extra = { chips = 2, mult = 2, is_left = true, state = 1 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = {
@@ -5808,15 +5213,6 @@ local function polar_star()
 	SMODS.Joker {
 		key = jokers.polar_star,
 		pos = jokerpos.polar_star,
-		loc_txt = {
-			name = "Polar Star",
-			text = {
-				"Upgrade level of",
-				"{C:attention}poker hand{} played every",
-				"{C:attention}#1# consecutive{} times the",
-				"same poker hand is played",
-			}
-		},
 		config = { extra = { consecutive_amount = 3 } },
 		loc_vars = function(_, info_queue, card)
 			local end_text = ""
@@ -5878,16 +5274,6 @@ local function jazz_cats_shades()
 	SMODS.Joker {
 		key = jokers.jazz_cats_shades,
 		pos = jokerpos.jazz_cats_shades,
-		loc_txt = {
-			name = "Shades Dupris",
-			text = {
-				"Gains {C:blue}+#1#{} Chips per",
-				"{C:attention}consecutive{} hand that does",
-				"not match either of your",
-				" last {C:attention}#2#{} played {C:attention}poker hands{}",
-				"{C:inactive}(Currently {C:blue}+#3#{C:inactive} Chips)",
-			}
-		},
 		config = { extra = { chips = 0, chip_mod = 25.1, consecutive_amount = 2 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = {
@@ -5936,16 +5322,6 @@ local function jazz_cats_tom()
 	SMODS.Joker {
 		key = jokers.jazz_cats_tom,
 		pos = jokerpos.jazz_cats_tom,
-		loc_txt = {
-			name = "Tom \"Milkbowl\" Malone",
-			text = {
-				"Gains {C:red}+#1#{} Mult per",
-				"{C:attention}consecutive{} hand that does",
-				"not match either of your",
-				" last {C:attention}#2#{} played {C:attention}poker hands{}",
-				"{C:inactive}(Currently {C:mult}+#3#{C:inactive} Mult)",
-			}
-		},
 		config = { mult = 0, extra = { bonus = 4.6, consecutive_amount = 2 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = {
@@ -6004,16 +5380,6 @@ local function jazz_cats_sphelonious()
 		key = jokers.jazz_cats_sphelonious,
 		pos = jokerpos.jazz_cats_sphelonious,
 		soul_pos = jokerpos.jazz_cats_sphelonious_soul,
-		loc_txt = {
-			name = "Sphelonious Donk",
-			text = {
-				"Gains {X:mult,C:white} X#1# {} Mult per",
-				"{C:attention}consecutive{} hand that does",
-				"not match either of your",
-				"last {C:attention}#2#{} played {C:attention}poker hands{}",
-				"{C:inactive}(Currently{} {X:mult,C:white} X#3# {} {C:inactive}Mult){}",
-			}
-		},
 		config = { extra = { xmult = 1, chips = 0, bonus = 0.1234271, consecutive_amount = 2 } },
 		loc_vars = function(_, info_queue, card)
 			local current_bonus = get_xmult_string(card.ability.extra.bonus)
@@ -6067,15 +5433,6 @@ local function boykisser()
 		atlas = ATLAS,
 		key = jokers.boykisser,
 		pos = jokerpos.boykisser,
-		loc_txt = {
-			name = "Boykisser",
-			text = {
-				"At end of hand, {C:green}#2# in #1#{}",
-				"chance to turn all {C:attention}played{}",
-				"cards into {C:attention}Kings{} and {C:attention}Jacks{}",
-				"{S:1.1,C:red,E:2}self destructs{}",
-			}
-		},
 		config = { extra = { odds = 4 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { card.ability.extra.odds or 4, G.GAME.probabilities.normal or 1 } }
@@ -6165,15 +5522,6 @@ local function nobodys_hero()
 	SMODS.Joker {
 		key = jokers.nobodys_hero,
 		pos = jokerpos.nobodys_hero,
-		loc_txt = {
-			name = 'Nobody\'s Hero',
-			text = {
-				"At end of hand, {C:attention}Jokers{}",
-				"that have {C:attention}triggered{}",
-				"{C:attention}#2#{} times this hand",
-				"give {C:blue}+#1#{} Chips"
-			}
-		},
 		config = { extra = { chips = 35, zero = 0 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = {
@@ -6213,15 +5561,6 @@ local function together_now()
 	SMODS.Joker {
 		key = jokers.together_now,
 		pos = jokerpos.together_now,
-		loc_txt = {
-			name = 'Together Now!',
-			text = {
-				"At end of hand, {C:attention}Jokers{}",
-				"that have {C:attention}triggered{}",
-				"at least {C:attention}once{} this hand",
-				"give {X:mult,C:white} X#1# {} Mult"
-			}
-		},
 		config = { extra = { xmult = 1.2 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = {
@@ -6262,16 +5601,6 @@ local function limited_liability_partnership()
 	SMODS.Joker {
 		key = jokers.limited_liability_partnership,
 		pos = jokerpos.limited_liability_partnership,
-		loc_txt = {
-			name = "Limited Liability Partnership",
-			text = {
-				"This Joker {C:attention}steals half{}",
-				"of your {C:money}blind cashout{}",
-				"and gains {X:mult,C:white} X#1# {} Mult",
-				"for each {C:money}dollar{} stolen",
-				"{C:inactive}(Stolen: {C:money}$#2#{C:inactive}){}",
-			}
-		},
 		config = { extra = { xmult = 0.06, stolen_money = 0 } },
 		loc_vars = function(self, info_queue, card)
 			local key = self.key
@@ -6314,16 +5643,6 @@ local function ajit_pai()
 	SMODS.Joker {
 		key = jokers.ajit_pai,
 		pos = jokerpos.ajit_pai,
-		loc_txt = {
-			name = "Ajit Pai",
-			text = {
-					"This Joker gains {C:money}#1#{} dollars",
-					"and {X:mult,C:white} X#2# {} Mult every hand,",
-					"{S:1.1,C:red,E:2}self destructs{} when you",
-					"have {C:money}#5#{} dollars or less",
-					"{C:inactive}(Currently: {C:money}#3#{C:inactive} and {X:mult,C:white} X#4#{C:inactive}){}",
-			}
-		},
 		config = { extra = { bonus_money = -1, bonus_xmult = 0.3, money = 0, xmult = 1, zero = 0 } },
 		loc_vars = function(self, info_queue, card)
 			return { 
@@ -6414,19 +5733,6 @@ local function nozomi()
 			key = jokers.nozomi,
 			pos = jokerpos.nozomi,
 			soul_pos = jokerpos.nozomi_soul,
-			loc_txt = {
-				name = "Nozomi",
-				text = {
-						"Always have at least",
-						"{C:attention}#1# Joker Slots",
-						"Cannot be sold or destroyed",
-						"unless Jokers have room",
-						"{C:inactive}(Currently: +#2# Joker slots){}",
-				},
-				unlock = {
-					"{E:1,s:1.3}?????"
-				}
-			},
 			config = { extra = { nine_joker_slots = 9 } },
 			loc_vars = function(self, info_queue, card)
 				local slots = card.ability.card_limit or 0
@@ -6482,19 +5788,6 @@ local function nozomi()
 			key = jokers.nozomi,
 			pos = jokerpos.nozomi,
 			soul_pos = jokerpos.nozomi_soul,
-			loc_txt = {
-				name = "Nozomi",
-				text = {
-						"Always have at least",
-						"{C:attention}#1# Joker Slots",
-						"Cannot be sold or destroyed",
-						"unless Jokers have room",
-						"{C:inactive}(Currently: +#2# Joker slots){}",
-				},
-				unlock = {
-					"{E:1,s:1.3}?????"
-				}
-			},
 			config = { extra = { nine_joker_slots = 9, bonus_joker_slots = 0, previously_processed_limit = nil } },
 			loc_vars = function(self, info_queue, card)
 				local mod = card.ability.extra.bonus_joker_slots
@@ -6593,15 +5886,6 @@ local function bites_the_dust()
 	SMODS.Joker {
 		key = jokers.bites_the_dust,
 		pos = jokerpos.bites_the_dust,
-		loc_txt = {
-			name = "BITES THE DUST",
-			text = {
-				"Obtain {C:attention}#1#{} copies of the last",
-				"{C:red}destroyed{} playing card this {C:attention}ante{}",
-				"when {C:attention}Boss Blind{} is defeated",
-				"{C:inactive,s:0.7}Rightmost cards always destroyed last{}",
-			}
-		},
 		config = { extra = { copy_count = 3 } },
 		loc_vars = function(self, info_queue, card)
 			local key = self.key
@@ -7035,14 +6319,6 @@ local function kingly_mask()
 	SMODS.Joker {
 		key = jokers.kingly_mask,
 		pos = jokerpos.kingly_mask,
-		loc_txt = {
-			name = "Kingly Mask",
-			text = {
-				"{C:attention}Face cards{} count as",
-				"{C:attention}Steel{} cards during",
-				"a {C:attention}Boss Blind{}",
-			}
-		},
 		config = { extra = { } },
 		loc_vars = function(self, info_queue, card)
 			return { vars = { } }
@@ -7080,15 +6356,6 @@ local function nintendo_power()
 	SMODS.Joker {
 		key = jokers.nintendo_power,
 		pos = jokerpos.nintendo_power,
-		loc_txt = {
-			name = "Nintendo Power",
-			text = {
-				"{C:attention}Retrigger{} scored cards",
-				"if played hand contains",
-				"a {C:chips}Bonus{} card",
-				"and a {C:red}Mult{} card",
-			}
-		},
 		config = { extra = { hand_is_powerful = false } },
 		loc_vars = function(self, info_queue, card)
 			return { vars = { } }
@@ -7178,13 +6445,6 @@ local function dr_andonuts()
 	local andonuts = SMODS.Joker {
 		key = jokers.dr_andonuts,
 		pos = jokerpos.dr_andonuts,
-		loc_txt = {
-			name = "Dr. Andonuts",
-			text = {
-				"At start of round,",
-				"create a {C:attention}Donut{}"
-			}
-		},
 		config = {},
 		loc_vars = function(_, info_queue, card)
 			info_queue[#info_queue+1] = G.P_CENTERS.j_qualatro_donut1
@@ -7235,14 +6495,6 @@ local function weezer()
 	SMODS.Joker {
 		key = jokers.weezer,
 		pos = jokerpos.weezer,
-		loc_txt = {
-			name = "Joker but bonus cards are retriggered",
-			text = {
-				"Can we just appreciate",
-				"how much effort he",
-				"puts into his effect?"
-			}
-		},
 		pixel_size = {
 			w = 71,
 			h = 71
@@ -7274,14 +6526,6 @@ local function djpk()
 	SMODS.Joker {
 		key = jokers.djpk,
 		pos = jokerpos.djpk,
-		loc_txt = {
-			name = "DJ Professor K.",
-			text = {
-				"On {C:attention}final{} hand of round,",
-				"convert all played cards",
-				"into {C:attention}Kings{}"
-			}
-		},
 		config = { },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { } }
@@ -7337,14 +6581,6 @@ local function cnas()
 	SMODS.Joker {
 		key = jokers.cartoon_gunner,
 		pos = jokerpos.cartoon_gunner,
-		loc_txt = {
-			name = "Cartoon Gunner",
-			text = {
-				"Each scoring",
-				"{C:attention}2{}, {C:attention}3{}, {C:attention}4{}, {C:attention}5{}, and {C:attention}6{}",
-				"gives {C:red}+#1#{} Mult",
-			}
-		},
 		config = { extra = { mult = 3 }},
 		loc_vars = function(_, info_queue, card)
 			return { vars = { 
@@ -7376,14 +6612,6 @@ local function cnas()
 	SMODS.Joker {
 		key = jokers.siiva_swim,
 		pos = jokerpos.siiva_swim,
-		loc_txt = {
-			name = "[siiva swim]",
-			text = {
-				"Each scoring",
-				"{C:attention}7{}, {C:attention}8{}, {C:attention}9{}, {C:attention}10{}, and {C:attention}Ace{}",
-				"gives {C:red}+#1#{} Mult",
-			}
-		},
 		config = { extra = { mult = 3 }},
 		loc_vars = function(_, info_queue, card)
 			return { vars = { 
@@ -7448,14 +6676,6 @@ local function brainless()
 	local brainless = SMODS.Joker {
 		key = jokers.brainless,
 		pos = jokerpos.brainless,
-		loc_txt = {
-			name = "Brainless Kitty",
-			text = {
-				"{X:mult,C:white} X#1# {} Mult",
-				"{C:green}#2# in #3#{} chance to",
-				"become {C:red}Evil"
-			}
-		},
 		config = { extra = { x_mult = 1.5, odds = 3 } },
 		loc_vars = function(_, info_queue, card)
 			return { vars = { 
@@ -7489,14 +6709,6 @@ local function brainless()
 	local evil_brainless = SMODS.Joker {
 		key = jokers.evil_brainless,
 		pos = jokerpos.evil_brainless,
-		loc_txt = {
-			name = "Evil Brainless",
-			text = {
-				"{X:mult,C:white} X#1# {} Mult",
-				"{C:green}#2# in #3#{} chance to",
-				"become {C:chips}Nice"
-			}
-		},
 		config = { extra = { x_mult = 0.75, odds = 2 } },
 		loc_vars = function(_, info_queue, card)
 			if #info_queue == 0 and not _.recurse then
@@ -7547,12 +6759,6 @@ local function mm2wood()
 	SMODS.Joker {
 		key = jokers.mm2wood,
 		pos = jokerpos.mm2wood,
-		loc_txt = {
-			name = "mm2wood",
-			text = {
-				"{C:chips}+#1#{} Chips"
-			}
-		},
 		config = { extra = { chips = 4 } },
 		loc_vars = function(self, info_queue, card)
 			if
