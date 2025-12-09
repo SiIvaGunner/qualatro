@@ -7878,7 +7878,7 @@ Card.can_sell_card = function(self, context)
 	return ret
 end
 
-local function add_to_joker_results_table(cardID)
+function add_to_joker_results_table(cardID)
 	if not G.GAME.joker_results_table then
 		G.GAME.joker_results_table = {}
 	end
