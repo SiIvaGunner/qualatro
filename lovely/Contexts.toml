@@ -509,3 +509,15 @@ pattern = "elseif G.GAME.round_resets.blind == G.P_BLINDS.bl_big then"
 position = "at"
 payload = "elseif G.GAME.blind_on_deck == 'Big' then"
 match_indent = true
+
+#NOTE: (Ahmayk) bypass unlock restriction on qualatro challenge
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = "if not SMODS.config.seeded_unlocks and (G.GAME.seeded or G.GAME.challenge) then return end"
+position = "at"
+payload = '''
+local challenge_blocks = G.GAME.challenge and not G.GAME.modifiers.bypass_unlocks
+if not SMODS.config.seeded_unlocks and (G.GAME.seeded or challenge_blocks) then return end
+'''
+match_indent = true

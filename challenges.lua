@@ -1,9 +1,3 @@
-SMODS.process_loc_text(G.localization.misc.v_text, "ch_c_qualatro_only", {
-	key = "ch_c_qualatro_only",
-	name = {
-		'Play using only {C:attention}Qualatro{} Jokers',
-	},
-}, 'name')
 
 SMODS.Challenge {
 	key = "QualatroOnly",
@@ -14,6 +8,7 @@ SMODS.Challenge {
 	rules = {
 	custom = {
 			{id = 'qualatro_only'},
+			{id = 'bypass_unlocks'},
 		},
 		modifiers = {
 		}
