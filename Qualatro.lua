@@ -3414,17 +3414,17 @@ local function gegagedigedagedago()
 					func = function()
 						local visible_cards = {}
 						for _, v in pairs(G.jokers.cards) do
-							if v and v.ability.set == "Joker" and not v.edition and not v.getting_sliced then
+							if v and v.ability and v.ability.set == "Joker" and not v.edition and not v.getting_sliced then
 								table.insert(visible_cards, v)
 							end
 						end
 						for _, v in pairs(G.hand.cards) do
-							if v and not v.edition and not v.getting_sliced then
+							if v and v.ability and not v.edition and not v.getting_sliced then
 								table.insert(visible_cards, v)
 							end
 						end
 						for _, v in pairs(G.consumeables.cards) do
-							if v and not v.edition and not v.getting_sliced then
+							if v and v.ability and not v.edition and not v.getting_sliced then
 								table.insert(visible_cards, v)
 							end
 						end
