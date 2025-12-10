@@ -3447,6 +3447,7 @@ local function gegagedigedagedago()
 									while
 										random_edition == nil or
 										random_edition.key == "e_base" or
+										not random_edition.in_shop or
 										((eligible_card.ability.set == "Default" or eligible_card.ability.set == "Enhanced") and random_edition.key == "e_negative")
 									do
 										random_edition = pseudorandom_element(G.P_CENTER_POOLS.Edition, pseudoseed("gegagedigedagedarandomedition"))
