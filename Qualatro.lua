@@ -3406,37 +3406,41 @@ local function gegagedigedagedago()
 					return
 				end
 
-				local triggered = false
+				local eligible_card, random_edition
 
+				-- This part (finding the editionable card) doesn't really need to be in an event,
+				-- but it might help if we ever can get the "don't give an edition to gedag that is going to get sliced" working.
+				-- so I'll just leave it for now
+				local event0 = math.ceil(pseudorandom("debugeventg") * 100)
+				if is_debug then print("queued event "..event0) end
 				G.E_MANAGER:add_event(Event({
-					trigger = "before",
-					delay = 0.3,
 					func = function()
+						if is_debug then print("activated event "..event0) end
 						local visible_cards = {}
 						for _, v in pairs(G.jokers.cards) do
-							if v and v.ability and v.ability.set == "Joker" and not v.edition and not v.getting_sliced then
+							if v and v.ability and v.ability.set == "Joker" and not v.edition and not v.getting_sliced and not v.getting_editioned then
 								table.insert(visible_cards, v)
 							end
 						end
 						for _, v in pairs(G.hand.cards) do
-							if v and v.ability and not v.edition and not v.getting_sliced then
+							if v and v.ability and not v.edition and not v.getting_sliced and not v.getting_editioned then
 								table.insert(visible_cards, v)
 							end
 						end
 						for _, v in pairs(G.consumeables.cards) do
-							if v and v.ability and not v.edition and not v.getting_sliced then
+							if v and v.ability and not v.edition and not v.getting_sliced and not v.getting_editioned then
 								table.insert(visible_cards, v)
 							end
 						end
+						if is_debug then print(#visible_cards) end
 
 						if #visible_cards > 0 then
-							local eligible_card = pseudorandom_element(visible_cards, pseudoseed("gegagedigedagedarandomjoker"))
+							eligible_card = pseudorandom_element(visible_cards, pseudoseed("gegagedigedagedarandomjoker"))
 							if eligible_card then
 								-- print(eligible_card.config.center.key.." "..eligible_card.rank)
 
 								--NOTE: (Ahmayk) cards are only given editions which are possible for that card type in vanilla balatro
 								--So consumbealbes can only be negative and playing cards cannot be negative
-								local random_edition = nil
 								if eligible_card.config.center.consumeable then
 									random_edition = G.P_CENTERS.e_negative
 								else
@@ -3448,30 +3452,43 @@ local function gegagedigedagedago()
 										random_edition = pseudorandom_element(G.P_CENTER_POOLS.Edition, pseudoseed("gegagedigedagedarandomedition"))
 									end
 								end
-
-								card_eval_status_text(eligible_card, 'extra', nil, nil, nil, {message = localize("qua_helped_ex"), colour = G.C.RED, instant=true })
-								eligible_card:set_edition({ [random_edition.key:sub(3)] = true }, true)
-								card_to_notify:juice_up();
-
-								triggered = true
 								card_to_notify.getting_sliced = true
+								eligible_card.getting_editioned = true
 							end
-							return true
-						else
-							card_eval_status_text(card_to_notify, 'extra', nil, nil, nil, {message = localize("qua_help_me"), colour = G.C.RED, sound = 'qualatro_HELP_ME' })
-							return true
 						end
+						return true
 					end
 				}))
 
+				local event1 = math.ceil(pseudorandom("debugeventg") * 100)
+				if is_debug then print("queued event "..event1) end
 				G.E_MANAGER:add_event(Event({
 					trigger = "before",
-					delay = 0.3,
+					delay = 1,
 					func = function()
-						if (triggered) then
-							card_to_notify.getting_sliced = false
-							SMODS.destroy_cards(card_to_notify, nil, nil, true)
-							card_eval_status_text(card_to_notify, 'extra', nil, nil, nil, {message = localize("qua_wh"), colour = G.C.RED, sound='qualatro_WHAT_REVERB'})
+						if is_debug then print("activated event "..event1) end
+						if eligible_card and random_edition and card_to_notify.getting_sliced then
+							card_eval_status_text(eligible_card, 'extra', nil, nil, nil, {message = localize("qua_helped_ex"), colour = G.C.RED, instant=true })
+							eligible_card:set_edition({ [random_edition.key:sub(3)] = true }, true)
+							eligible_card.getting_editioned = false
+							card_to_notify:juice_up()
+						else
+							card_eval_status_text(card_to_notify, 'extra', nil, nil, nil, {message = localize("qua_help_me"), colour = G.C.RED, sound = 'qualatro_HELP_ME', instant=true })
+						end
+						return true
+					end
+				}))
+
+				local event2 = math.ceil(pseudorandom("debugeventg") * 100)
+				if is_debug then print("queued event "..event2) end
+				G.E_MANAGER:add_event(Event({
+					trigger = "before",
+					delay = 0.5,
+					func = function()
+						if is_debug then print("activated event "..event2) end
+						if (card_to_notify.getting_sliced) then
+							SMODS.destroy_cards(card_to_notify, nil, true)
+							card_eval_status_text(card_to_notify, 'extra', nil, nil, nil, {message = localize("qua_wh"), colour = G.C.RED, sound='qualatro_WHAT_REVERB', instant=true})
 						end
 						return true
 					end
@@ -7878,7 +7895,7 @@ Card.can_sell_card = function(self, context)
 	return ret
 end
 
-local function add_to_joker_results_table(cardID)
+function add_to_joker_results_table(cardID)
 	if not G.GAME.joker_results_table then
 		G.GAME.joker_results_table = {}
 	end
