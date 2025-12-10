@@ -904,6 +904,7 @@ return {
 			qua_beaned_ex="BEANED!!!",
 			qua_copied_ex="Copied!",
 			qua_downgrade_ex="Downgrade!",
+			qua_destroyed_ex="Destroyed!",
 			qua_doover_ex="Do-over!",
 			qua_escaped_ex="Escaped!",
 			qua_escaped_question="Escaped?",
@@ -991,7 +992,7 @@ return {
 			{"STOP!"},
 			{"THAT'S NOT FUNNY!!!"},
 			{"STOP, HUMAN!!!"},
-			{"WHAT ARE YOU DOING!!!!"}
+			{"WHAT ARE YOU DOING!!!!"},
 		},
 		poker_hand_descriptions={},
 		poker_hands={},

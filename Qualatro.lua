@@ -2759,11 +2759,6 @@ local function update_lost_media(card, missing_ranks_array, is_notify)
 		local xmult = 1 + (#missing_ranks_array * card.ability.extra.xmult_scale)
 		if card.ability.extra.xmult ~= xmult then
 			card.ability.extra.xmult = xmult
-			if #missing_ranks_array > 0 then
-				card.ability.extra.missing_ranks_string = table.concat(missing_ranks_array, ", ")
-			else
-				card.ability.extra.missing_ranks_string = "None"
-			end
 			if (is_notify) then
 				card_eval_status_text(card, 'extra', nil, nil, nil, {colour = G.C.RED, message = localize{type = 'variable', key = 'a_xmult', vars = {card.ability.extra.xmult}}})
 			end
@@ -2779,13 +2774,11 @@ local function lost_media()
 		config = { extra = {
 			xmult_scale = 0.5,
 			xmult = 1,
-			missing_ranks_string = "None",
 		} },
 		loc_vars = function(_, info_queue, card)
 			return { vars = {
 				card.ability.extra.xmult_scale,
 				card.ability.extra.xmult,
-				card.ability.extra.missing_ranks_string or "None"
 			} }
 		end,
 		rarity = rarity.UNCOMMON,
@@ -3219,7 +3212,7 @@ local function gadget_room()
 		calculate = function(_, card, context)
 			if context.popcorn_exploded and not context.blueprint and not SMODS.is_eternal(card) then
 				return {
-					message = "Destroyed!",
+					message = localize('qua_destroyed_ex'),
 					colour = G.C.RED,
 					func = function()
 						play_sound('tarot1')
