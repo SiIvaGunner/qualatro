@@ -936,6 +936,63 @@ return {
 		labels={
 			qualatro_stingy="Stingy's",
 		},
+		--NOTE: (Ahmayk) nearly all of papyrus's lines are pulled from undertale
+		--please use the equivalent phrase from the official game
+		--when translating if one exists and it makes sense
+		papyrus_inactive={
+			{"NO!!"},
+			{"AUGH!!!"},
+			{"URRRGH!!!"},
+			{"NOOOOOOOO!!!"},
+			{"THAT'S WRONG!"},
+			{"WHAT THE HECK!"},
+			{"HEY!!!"},
+			{"WHAT ARE YOU DOING!!!"},
+			{"JEEZ!!!"},
+			{"OH NO!!!"},
+			{"OH MY GOD!!"},
+			{"WHOOPSIE DOOPSIE!"},
+			{"QUIT MOVING!"},
+			{"UGH!!!"},
+			{"RIDICULOUS!"},
+			{"ZOINKS!!!"},
+			{"UH OH!!!"},
+			{"DO YOU TREAT YOUR MOTHER THIS WAY?!?!??"},
+			{"STOP, HUMAN!!!!"},
+			{"YOU ARE BREAKING MY HEART!!!!"},
+			{"I CAN'T BELIEVE YOU'VE DONE THIS!!!!!!"},
+		},
+		papyrus_success={
+			{"NYEH HEH HEH!!!"},
+			{"WOWIE!!"},
+			{"YOU DID IT!!!"},
+			{"I'M SO PROUD I COULD CRY!!!"},
+			{"WOW!!!"},
+			{"OHO!"},
+			{"THAT'S THE SPIRIT!"},
+			{"I'LL ALLOW IT!!!!"},
+			{"I'M IMPRESSED!!"},
+			{"(AUDIBLE WINK)"},
+			{"KA-WOWIE!"}
+		},
+		--NOTE: (Ahmayk) most of these i think i made up
+		papyrus_cheat={
+			{"HUH????"},
+			{"EXCUSE ME????"},
+			{"HEY!!!!"},
+			{"S-S-STOP!!!!!!"},
+			{"UM!!!!!!!!!!!!!!!!!!"},
+			{"WHAT!!!!!!"},
+			{"STOP THAT!!!"},
+			{"WHY!!!!"},
+			{"YOU SHOULD NOT DO THAT!!!"},
+			{"HELLO????"},
+			{"WHY YOU!!!!!"},
+			{"STOP!"},
+			{"THAT'S NOT FUNNY!!!"},
+			{"STOP, HUMAN!!!"},
+			{"WHAT ARE YOU DOING!!!!"}
+		},
 		poker_hand_descriptions={},
 		poker_hands={},
 		quips={

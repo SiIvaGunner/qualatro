@@ -1846,60 +1846,6 @@ end
 local function papyrus()
 	-- Papyrus
 
-	local inactive_quips = {
-		"NO!!",
-		"AUGH!!!",
-		"URRRGH!!!",
-		"NOOOOOOOO!!!",
-		"THAT'S WRONG!",
-		"WHAT THE HECK!",
-		"HEY!!!",
-		"WHAT ARE YOU DOING!!!",
-		"JEEZ!!!",
-		"OH NO!!!",
-		"OH MY GOD!!",
-		"WHOOPSIE DOOPSIE!",
-		"QUIT MOVING!",
-		"UGH!!!",
-		"RIDICULOUS!",
-		"ZOINKS!!!",
-		"UH OH!!!",
-		"DO YOU TREAT YOUR MOTHER THIS WAY?!?!??",
-		"STOP, HUMAN!!!!",
-		"YOU ARE BREAKING MY HEART!!!!",
-		"I CAN'T BELIEVE YOU'VE DONE THIS!!!!!!",
-	}
-	local success_quips = {
-		"NYEH HEH HEH!!!",
-		"WOWIE!!",
-		"YOU DID IT!!!",
-		"I'M SO PROUD I COULD CRY!!!",
-		"WOW!!!",
-		"OHO!",
-		"THAT'S THE SPIRIT!",
-		"I'LL ALLOW IT!!!!",
-		"I'M IMPRESSED!!",
-		"(AUDIBLE WINK)",
-		"KA-WOWIE!",
-	}
-	local cheat_quips = {
-		"HUH????",
-		"EXCUSE ME????",
-		"HEY!!!!",
-		"S-S-STOP!!!!!!",
-		"UM!!!!!!!!!!!!!!!!!!",
-		"WHAT!!!!!!",
-		"STOP THAT!!!",
-		"WHY!!!!",
-		"YOU SHOULD NOT DO THAT!!!",
-		"HELLO????",
-		"WHY YOU!!!!!",
-		"STOP!",
-		"THAT'S NOT FUNNY!!!",
-		"STOP, HUMAN!!!",
-		"WHAT ARE YOU DOING!!!!",
-	}
-
 	local function papyrus_text(card, message, color, is_extra_quip)
 		G.E_MANAGER:add_event(Event({
 			trigger = 'before',
@@ -1981,19 +1927,19 @@ local function papyrus()
 				elseif context.papyrus_mode == 2 and card.ability.extra.active then
 					if G.STATE == G.STATES.SELECTING_HAND then
 						card.ability.extra.active = false
-						local quip = pseudorandom_element(inactive_quips, pseudoseed("papyrus_inactive"))
+						local quip = pseudorandom_element(G.localization.misc.papyrus_inactive, pseudoseed("papyrus_inactive"))
 						G.GAME.sucks_at_papyrus = true
 						papyrus_text(card, quip, G.C.RED)
 					elseif G.STATE == G.STATES.HAND_PLAYED or G.STATE == G.STATES.DRAW_TO_HAND then
 						card.ability.extra.active = false
-						local quip = pseudorandom_element(cheat_quips, pseudoseed("papyrus_cheat"))
+						local quip = pseudorandom_element(G.localization.misc.papyrus_cheat, pseudoseed("papyrus_cheat"))
 						papyrus_text(card, quip, G.C.RED, true)
 					end
 				end
 			end
 
 			if context.after and card.ability.extra.active and (G.GAME.sucks_at_papyrus or not G.GAME.papyrus_has_said_success_text_once) then
-				local quip = pseudorandom_element(success_quips, pseudoseed("papyrus_success"))
+				local quip = pseudorandom_element(G.localization.misc.papyrus_success, pseudoseed("papyrus_success"))
 				papyrus_text(card, quip, G.C.BLUE, true)
 				G.GAME.papyrus_has_said_success_text_once = true
 			end
