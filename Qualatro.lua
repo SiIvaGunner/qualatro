@@ -3405,6 +3405,9 @@ local function gegagedigedagedago()
 				if pseudorandom('gegagedigedagedadie') > (G.GAME.probabilities.normal / card.ability.extra.odds) then
 					return
 				end
+				-- Naive approach. Always assume a gedag that gets here is going to activate
+				-- (not necessarily true as there could be no cards that can recieve editions)
+				card_to_notify.getting_sliced = true
 
 				local eligible_card, random_edition
 
@@ -3454,7 +3457,11 @@ local function gegagedigedagedago()
 								end
 								card_to_notify.getting_sliced = true
 								eligible_card.getting_editioned = true
+							else 
+								card_to_notify.getting_sliced = false
 							end
+						else
+							card_to_notify.getting_sliced = false
 						end
 						return true
 					end
@@ -3474,6 +3481,7 @@ local function gegagedigedagedago()
 							card_to_notify:juice_up()
 						else
 							card_eval_status_text(card_to_notify, 'extra', nil, nil, nil, {message = localize("qua_help_me"), colour = G.C.RED, sound = 'qualatro_HELP_ME', instant=true })
+							card_to_notify.getting_sliced = false
 						end
 						return true
 					end
