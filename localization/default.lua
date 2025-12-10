@@ -916,10 +916,13 @@ return {
 			qua_help_me="HELP ME",
 			qua_helped_ex="Helped!",
 			qua_iamgod="I AM GOD",
+			qua_inactive="Inactive",
 			qua_loaded="Loaded.",
 			qua_loop_ex="Loop!",
 			qua_loophole_ex="Loophole Found!",
 			qua_out_of_buisness_ex="Out of Business!",
+			qua_pomni_rare_joker="Rare Joker",
+			qua_pomni_abstract="Abstract",
 			qua_purge="Purge.",
 			qua_pussy_ex="Pussy!",
 			qua_refused_ex="Refused!",
@@ -940,6 +943,7 @@ return {
 		},
 		--NOTE: (Ahmayk) these characters are inserted very rarely into missingno's description
 		--other languages should use characters that are typical in their own langauge
+		--and match the spirit of these groupings
 		--all lowercase, cases are handled in code
 		missingno_random_insert_letters={
 			{'a','e','i','o','u'}, -- vowels
@@ -1109,9 +1113,12 @@ return {
             ch_c_kfad_editions = {
 				"All Jokers are {C:dark_edition}Foil{}, {C:dark_edition}Holographic{}, or {C:dark_edition}Polychrome{}"
 			},
+			--NOTE: (Ahmayk) references default "None"
             ch_c_missingno = {
 				"{C:inactive}Noooooooooooooooooooooooooo{}"
 			},
+			--NOTE: (Ahmayk) references missingno KFAD page
+			--don't bother localizing this you can't even read it lol
             ch_c_missingno_oops_1 = {
 				"yyyyyyyyyyyyyyyyyyyyyyyyyeyeayeayeayeayeayeayeayeayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayheayh eayh eayh eayh geayh geayho geayho geayho geayho g eayho g eayho g eayho g eayho g eahyho g eahyho g eahyho ge eahyho ge"
 			},

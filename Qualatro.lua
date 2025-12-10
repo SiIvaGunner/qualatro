@@ -3894,9 +3894,9 @@ local function kazoo()
 					end
 				end
 				if other_joker and other_joker ~= card and other_joker.config.center.blueprint_compat then
-					card.ability.blueprint_compat = "compatible"
+					card.ability.blueprint_compat = localize("k_compatible")
 				else
-					card.ability.blueprint_compat = "incompatible"
+					card.ability.blueprint_compat = localize("k_incompatible")
 				end
 			end
 		end,
@@ -4653,11 +4653,11 @@ local function pomni()
 		loc_vars = function(_, info_queue, card)
 
 			local glitched_string = {
-				{string = "Rare Joker", colour = G.C.RED},
-				{string = "Rare Joker", colour = G.C.RED},
-				{string = "Abstract", colour = G.C.IMPORTANT},
-				{string = "Abstract", colour = G.C.IMPORTANT},
-				{string = "%$!#"},
+				{string = localize('qua_pomni_rare_joker'), colour = G.C.RED},
+				{string = localize('qua_pomni_rare_joker'), colour = G.C.RED},
+				{string = localize('qua_pomni_abstract'), colour = G.C.IMPORTANT},
+				{string = localize('qua_pomni_abstract'), colour = G.C.IMPORTANT},
+				{string = "%$!#"}, --NOTE: (Ahmayk) not localized, this is pulled directly from tadc
 			}
 			local result = {
 				vars = {
@@ -4853,7 +4853,7 @@ local function takeover_doover()
 				result.main_end[#result.main_end + 1] = 
 					{n=G.UIT.R, config = {align= "m", padding = 0.02}, nodes={
 						{n=G.UIT.C, config={align = "m", colour = G.C.RED, r = 0.05, padding = 0.05}, nodes={
-							{n=G.UIT.T, config={text = ' Inactive ', colour = G.C.UI.TEXT_LIGHT, scale = 0.25, shadow = true}}
+							{n=G.UIT.T, config={text =  ' ' .. localize('qua_inactive') .. ' ', colour = G.C.UI.TEXT_LIGHT, scale = 0.25, shadow = true}}
 						}}
 					}}
 			end
