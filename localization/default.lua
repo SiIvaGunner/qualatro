@@ -146,7 +146,17 @@ return {
 					"time the least played",
 					"Hand has been played",
 					"{C:inactive,s:0.8}(Currently {}{C:blue,s:0.8}+#2#{}{C:inactive,s:0.8} Hands)",
-					"{C:purple,s:0.8}#3#{}{C:inactive,s:0.8} #4# {C:attention,s:0.8}Ogg{}"
+					"{C:purple,s:0.8}Friends{}{C:inactive,s:0.8} with {C:attention,s:0.8}Ogg{}"
+				}
+			},
+			j_qualatro_inspector_gadget_buffed = {
+				name = "Inspector Gadget",
+				text = {
+					"{C:blue}+#1#{} hands for each",
+					"time the least played",
+					"Hand has been played",
+					"{C:inactive,s:0.8}(Currently {}{C:blue,s:0.8}+#2#{}{C:inactive,s:0.8} Hands)",
+					"{C:purple,s:0.8}Buffed{}{C:inactive,s:0.8} by {C:attention,s:0.8}Ogg{}"
 				}
 			},
 			j_qualatro_ogg = {
@@ -156,7 +166,17 @@ return {
 					"time the least played",
 					"Hand has been played",
 					"{C:inactive,s:0.8}(Currently {}{C:red,s:0.8}+#2#{}{C:inactive,s:0.8} Discards)",
-					"{C:purple,s:0.8}#3#{}{C:inactive,s:0.8} #4# {C:attention,s:0.8}Inspector Gadget{}"
+					"{C:purple,s:0.8}Friends{}{C:inactive,s:0.8} with {C:attention,s:0.8}Inspector Gadget{}"
+				}
+			},
+			j_qualatro_ogg_buffed = {
+				name = "Ogg",
+				text = {
+					"{C:red}+#1#{} discards for each",
+					"time the least played",
+					"Hand has been played",
+					"{C:inactive,s:0.8}(Currently {}{C:red,s:0.8}+#2#{}{C:inactive,s:0.8} Discards)",
+					"{C:purple,s:0.8}Buffed{}{C:inactive,s:0.8} by {C:attention,s:0.8}Inspector Gadget{}"
 				}
 			},
 			j_qualatro_genocide_chad = {

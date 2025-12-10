@@ -1233,16 +1233,19 @@ local function inspector_gadget()
 		key = jokers.inspector_gadget,
 		pos = jokerpos.inspector_gadget,
 		config = { extra = { bonus = 1, extra_hands = 0 } },
-		loc_vars = function(_, info_queue, card)
+		loc_vars = function(self, info_queue, card)
+			local key = self.key
 			local is_buffed = next(SMODS.find_card(jokerkey.ogg))
-			return { vars = {
-				gadget_and_ogg_get_buffed_bonus(card.ability.extra.bonus, is_buffed),
-				card.ability.extra.extra_hands,
-				--TODO: (Ahmayk) How to do localization here?
-				is_buffed and "Buffed" or "Friends",
-				is_buffed and "by" or "with"
+			if is_buffed then
+				key = key .. '_buffed'
+			end
+			return {
+				vars = {
+					gadget_and_ogg_get_buffed_bonus(card.ability.extra.bonus, is_buffed),
+					card.ability.extra.extra_hands,
+				},
+				key = key
 			}
-		}
 		end,
 		rarity = rarity.UNCOMMON,
 		atlas = ATLAS,
@@ -1274,15 +1277,19 @@ local function ogg()
 		key = jokers.ogg,
 		pos = jokerpos.ogg,
 		config = { extra = { bonus = 1, extra_discards = 0 } },
-		loc_vars = function(_, info_queue, card)
+		loc_vars = function(self, info_queue, card)
+			local key = self.key
 			local is_buffed = next(SMODS.find_card(jokerkey.inspector_gadget))
-			return { vars = {
-				gadget_and_ogg_get_buffed_bonus(card.ability.extra.bonus, is_buffed),
-				card.ability.extra.extra_discards,
-				--TODO: (Ahmayk) How to do localization here?
-				is_buffed and "Buffed" or "Friends",
-				is_buffed and "by" or "with"
-			}}
+			if is_buffed then
+				key = key .. '_buffed'
+			end
+			return {
+				vars = {
+					gadget_and_ogg_get_buffed_bonus(card.ability.extra.bonus, is_buffed),
+					card.ability.extra.extra_discards,
+				},
+				key = key
+			}
 		end,
 		rarity = rarity.UNCOMMON,
 		atlas = ATLAS,
