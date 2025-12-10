@@ -3277,9 +3277,6 @@ local function missingno()
 
 	SMODS.Rarity {
 		key = "bird",
-		loc_txt = {
-			name = "Bird",
-		},
 		pools = { ["Joker"] = true },
 		default_weight = 0.002,
 	}
@@ -3347,11 +3344,7 @@ local function missingno()
 					if not parsed_string then break end
 					for _,v in pairs(parsed_string) do
 						if v.strings and #v.strings == 1 and type(v.strings[1]) == 'string' then
-							v.strings[1] = randomize(v.strings[1], pseudorandom_element({
-								{'a','e','i','o','u'},
-								{'b','d','p','q'},
-								{'i','l'},
-							}, "random_letter_replacement"), 0.01)
+							v.strings[1] = randomize(v.strings[1], pseudorandom_element(G.localization.misc.missingno_random_insert_letters, "random_letter_replacement"), 0.01)
 						end
 					end
 					card.config.center.loc_txt.text_parsed[pos] = parsed_string

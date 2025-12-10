@@ -898,6 +898,7 @@ return {
 		dictionary={
 			k_qualatro_contestant="Contestant",
 			k_qualatro_tournament_pack="Tournament",
+			k_qualatro_bird="Bird",
 
 			qua_abstracted_ex="Abstracted!",
 			qua_debuff_ex="Debuff!",
@@ -937,9 +938,17 @@ return {
 		labels={
 			qualatro_stingy="Stingy's",
 		},
+		--NOTE: (Ahmayk) these characters are inserted very rarely into missingno's description
+		--other languages should use characters that are typical in their own langauge
+		--all lowercase, cases are handled in code
+		missingno_random_insert_letters={
+			{'a','e','i','o','u'}, -- vowels
+			{'b','d','p','q'}, --consonants that look similar
+			{'i','l'}, --two characters that look almost identical (this is reference to siiva I and l being swapped in SiIvaGunner's name)
+		},
 		--NOTE: (Ahmayk) nearly all of papyrus's lines are pulled from undertale
 		--please use the equivalent phrase from the official game
-		--when translating if one exists and it makes sense
+		--when translating if one exists and it makes sense to use it
 		papyrus_inactive={
 			{"NO!!"},
 			{"AUGH!!!"},
