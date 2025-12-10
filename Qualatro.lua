@@ -5153,24 +5153,32 @@ local function polar_star()
 		key = jokers.polar_star,
 		pos = jokerpos.polar_star,
 		config = { extra = { consecutive_amount = 3 } },
-		loc_vars = function(_, info_queue, card)
-			local end_text = ""
+		loc_vars = function(self, info_queue, card)
+			local show_remaining = false
+			local remaining_plays = 0
 			if G.GAME.qualatro_hands_played_cache and not card.debuff then
 				local consecutive_plays = get_last_hand_played_consecutive_count()
 				if consecutive_plays > 0 then
-					local remaining_plays = card.ability.extra.consecutive_amount - consecutive_plays % card.ability.extra.consecutive_amount
+					remaining_plays = card.ability.extra.consecutive_amount - consecutive_plays % card.ability.extra.consecutive_amount
 					if remaining_plays > 0 and remaining_plays < card.ability.extra.consecutive_amount then
-						end_text = remaining_plays .. " remaining (" .. G.GAME.last_hand_played .. ")"
+						show_remaining = true
 					end
 				end
 			end
-			local ret = { vars = {
-				card.ability.extra.consecutive_amount,
-			} }
-			if #end_text then
-				ret.main_end = {
-					{n=G.UIT.O, config={object = DynaText({string = end_text, colours = {G.C.UI.TEXT_INACTIVE}, pop_in_rate = 9999999, silent = true, scale = 0.25, align="bm"})}},
+			local ret = nil
+			if show_remaining then
+				ret = {
+					vars = {
+						card.ability.extra.consecutive_amount,
+						remaining_plays,
+						G.GAME.last_hand_played
+					},
+					key = self.key .. '_remaining'
 				}
+			else
+				ret = { vars = {
+					card.ability.extra.consecutive_amount,
+				} }
 			end
 			return ret
 		end,

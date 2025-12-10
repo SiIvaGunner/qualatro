@@ -633,6 +633,16 @@ return {
 					"same poker hand is played",
 				}
 			},
+			j_qualatro_polar_star_remaining = {
+				name = "Polar Star",
+				text = {
+					"Upgrade level of",
+					"{C:attention}poker hand{} played every",
+					"{C:attention}#1# consecutive{} times the",
+					"same poker hand is played",
+					"{C:inactive,s:0.7}#2# remaining (#3#)",
+				}
+			},
 			j_qualatro_jazz_cats_shades = {
 				name = "Shades Dupris",
 				text = {
