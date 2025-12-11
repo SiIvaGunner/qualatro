@@ -198,7 +198,7 @@ function run_resph()
           end
           if #sevens > 0 then
             return {
-              message = "Steel",
+			  message = localize('qua_steel'),
               colour = G.C.JOKER_GREY,
               card = card
             }
@@ -580,7 +580,7 @@ function run_resph()
                         b:add_to_deck()
                         G.jokers:emplace(b)
                         play_sound('holo1')
-                        card_eval_status_text(b, 'extra', nil, nil, nil, {message = "Fused!", colour = G.C.PURPLE})
+                        card_eval_status_text(b, 'extra', nil, nil, nil, {message = localize("qua_fused_ex"), colour = G.C.PURPLE})
                         return true;
                       end
                     }))
@@ -607,7 +607,7 @@ function run_resph()
             }))
             G.GAME.pool_flags.reader_and_jerome_fused = true
             return {
-              message = "Fused!"
+              message = localize("qua_fused_ex")
             }
           end
         end
@@ -771,13 +771,13 @@ function run_resph()
           local retrigger_stone_card = next(SMODS.find_card(jokers.siiva_ai)) and (context.other_card.config.center == G.P_CENTERS.m_stone)
           if (context.cardarea == G.play) and (retrigger_steel_card or retrigger_stone_card) then
             return {
-              message = 'Loop!',
+              message = localize("qua_loop_ex"),
               repetitions = 1,
               card = card
             }
           elseif (context.cardarea == G.hand) and (context.card_effects and (next(context.card_effects[1]) or #context.card_effects > 1)) then
             return {
-              message = 'Loop!',
+              message = localize("qua_loop_ex"),
               repetitions = 1,
               card = card
             }
@@ -1040,11 +1040,16 @@ function run_resph()
       calculate = function(_, card, context)
         if context.setting_blind then
           local extra_discards = (calc_min_played() * (card.ability.extra.bonus + (next(SMODS.find_card(jokers.inspector_gadget)) and card.ability.extra.bonus or 0)))
+		  local extra_discards = 2
           if extra_discards > 0 then
+			local key = 'qua_discard'
+			if extra_discards > 1 then
+				key = 'qua_discards'
+			end
             G.E_MANAGER:add_event(Event({func = function()
               ease_discard(extra_discards)
               card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil,
-              {message = string.format("+%s Discard%s", extra_discards, (extra_discards > 1) and "s" or ""), colour = G.C.RED})
+              {message = localize{type = 'variable', key = key, vars = {extra_discards}}, colour = G.C.RED})
             return true end }))
           end
         end
@@ -1072,7 +1077,7 @@ function run_resph()
             delay = 0.8,
             func = function()
               card:juice_up(0.8, 0.8)
-              card_eval_status_text(card, 'extra', nil, nil, nil, {message = "Loaded.", colour = G.C.RED})
+              card_eval_status_text(card, 'extra', nil, nil, nil, {message = localize("qua_loaded"), colour = G.C.RED})
             return true
           end}))
         elseif context.setting_blind and card.ability.extra.loaded and not card.getting_sliced then
@@ -1090,7 +1095,7 @@ function run_resph()
                     delay = 1.6,
                     func = function()
                     c:juice_up(0.8, 0.8)
-                    card_eval_status_text(v, 'extra', nil, nil, nil, {message = "Refused!", colour = G.C.RED})
+                    card_eval_status_text(v, 'extra', nil, nil, nil, {message = localize("qua_refused_ex"), colour = G.C.RED})
                     return true
                   end}))
                 elseif v.ability.eternal or v.getting_sliced then
