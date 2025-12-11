@@ -1,7 +1,11 @@
 return {
 	descriptions = {
 		Back={},
-		Blind={},
+		Blind={
+			bl_wall={
+				name="The Chungus",
+			},
+		},
 		Edition={},
 		Enhanced={},
 		Joker={
@@ -771,8 +775,10 @@ return {
 					"{C:inactive}(Currently {X:mult,C:white} X#4# {C:inactive} Mult)",
 				}
 			},
+ 			--NOTE: (Ahmayk) modified in generate_ui
+			--The title of the selected joker is appended to the front
 			j_qualatro_etika_reveal_template = {
-				name = " REVEAL!!!", --NOTE: (Ahmayk) modified in generate_ui
+				name = " REVEAL!!!",
 			},
 			j_qualatro_kingly_mask = {
 				name = "Kingly Mask",
@@ -911,6 +917,8 @@ return {
 			k_qualatro_bird="Bird",
 
 			qua_abstracted_ex="Abstracted!",
+			qua_chipi_ex="Chipi!",
+			qua_chapa_ex="Chapa!",
 			qua_debuff_ex="Debuff!",
 			qua_beaned_ex="BEANED!!!",
 			qua_copied_ex="Copied!",
@@ -926,6 +934,7 @@ return {
 			qua_help_me="HELP ME",
 			qua_helped_ex="Helped!",
 			qua_iamgod="I AM GOD",
+			qua_impossible_ex="Impossible!",
 			qua_inactive="Inactive",
 			qua_loaded="Loaded.",
 			qua_loop_ex="Loop!",
@@ -961,8 +970,8 @@ return {
 			{'i','l'}, --two characters that look almost identical (this is reference to siiva I and l being swapped in SiIvaGunner's name)
 		},
 		--NOTE: (Ahmayk) nearly all of papyrus's lines are pulled from undertale
-		--please use the equivalent phrase from the official game
-		--when translating if one exists and it makes sense to use it
+		--when translating, please use the equivalent phrase from the official game
+		--if one exists and it makes sense to use it
 		papyrus_inactive={
 			{"NO!!"},
 			{"AUGH!!!"},

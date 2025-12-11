@@ -5411,12 +5411,12 @@ local function boykisser()
 							blocking = true,
 							func = (function()
 								local rank = gay_ranks[first_gay_rank_index + 1] 
-								local quip = "Chipi!"
+								local quip = localize('qua_chipi_ex')
 								--NOTE: (Ahmayk) give equal amounts of jack and kings as is possible
 								--but follow the Chipi! Chapa! pattern as best we can too
 								if i > 2 or (#G.play.cards == 2 and i > 1) then 
 									rank = gay_ranks[(1 - first_gay_rank_index) + 1]
-									quip = "Chapa!"
+									quip = localize('qua_chapa_ex')
 								end
 								SMODS.change_base(gay_card, nil, rank)
 								card_to_notify:juice_up()
@@ -5840,9 +5840,9 @@ local function bites_the_dust()
 			local colours = {}
 			if G.GAME and G.GAME.last_destroyed_inactive_card_data then
 				key = self.key .. "_alt"
-				if G.GAME.last_destroyed_inactive_card_data.ability.name == 'Stone Card' then
+				if G.GAME.last_destroyed_inactive_card_data.ability.effect == 'Stone Card' then
 					colours = {G.C.IMPORTANT}
-					last_destroyed_card_name = 'Stone Card' 
+					last_destroyed_card_name = G.localization.descriptions.Enhanced.m_stone.name
 				else
 					colours = {G.C.SUITS[G.GAME.last_destroyed_inactive_card_data.config.card.suit]}
 					last_destroyed_card_name = G.GAME.last_destroyed_inactive_card_data.config.card.name
@@ -6380,7 +6380,7 @@ local function init_donut(i)
 				local can_be_removed = limit_after - 1 > G.jokers.config.card_count - card.ability.extra.joker_slots 
 				if not can_be_removed then
 					SMODS.destroy_cards(card, nil, nil, true)
-					card_eval_status_text(card, 'extra', nil, nil, nil, {colour = G.C.RED, message = "Impossible!"})
+					card_eval_status_text(card, 'extra', nil, nil, nil, {colour = G.C.RED, message = localize('qua_impossible_ex')})
 				end
 			end
 			G.jokers.config.card_limit = G.jokers.config.card_limit - 1
@@ -7018,8 +7018,6 @@ local function init_tournament_boosters()
 	}
 end
 -- init_tournament_boosters()
-
-SMODS.Blind:take_ownership('wall',{loc_txt={name="The Chungus"}},true)
 
 -- Taken from Cryptid
 -- Calculate events on start of shop.
