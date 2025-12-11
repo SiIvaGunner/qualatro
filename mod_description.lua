@@ -89,7 +89,7 @@ return {
 									nodes = {
 										{
 											n = G.UIT.T,
-											config = { text = "SiIvaGunner Balatro Mod", colour = G.C.WHITE, scale = 0.4, },
+											config = { text = localize("qua_credits_subtitle"), colour = G.C.WHITE, scale = 0.4, },
 										},
 									}
 								},
@@ -111,7 +111,7 @@ return {
 									nodes = {
 										{
 											n = G.UIT.T,
-											config = { text = "Developed by:", colour = G.C.WHITE, scale = 0.6 }
+											config = { text = localize("qua_credits_developed"), colour = G.C.WHITE, scale = 0.6 }
 										},
 									}
 								},
@@ -128,7 +128,7 @@ return {
 									nodes = {
 										{
 											n = G.UIT.T,
-											config = { text = "Additional testing by:", colour = G.C.WHITE, scale = 0.4 }
+											config = { text = localize("qua_credits_testing"), colour = G.C.WHITE, scale = 0.4 }
 										},
 									}
 								},
@@ -153,7 +153,7 @@ return {
 									nodes = {
 										{
 											n = G.UIT.T,
-											config = { text = "Music by:", colour = G.C.WHITE, scale = 0.6 }
+											config = { text = localize("qua_credits_music"), colour = G.C.WHITE, scale = 0.6 }
 										},
 									}
 								},
@@ -169,7 +169,7 @@ return {
 									nodes = {
 										{
 											n = G.UIT.T,
-											config = { text = "Special Thanks:", colour = G.C.WHITE, scale = 0.4 }
+											config = { text = localize("qua_credits_thanks"), colour = G.C.WHITE, scale = 0.4 }
 										},
 									}
 								},
@@ -186,12 +186,12 @@ return {
 									nodes = {
 										{
 											n = G.UIT.T,
-											config = { text = "Special Unthanks:", colour = G.C.WHITE, scale = 0.4 }
+											config = { text = localize("qua_credits_unthanks"), colour = G.C.WHITE, scale = 0.4 }
 										},
 									}
 								},
-								credit("1-indexed arrays", thanks),
-								credit("No .contains() method", thanks),
+								credit(localize("qua_credits_arrays"), thanks),
+								credit(localize("qua_credits_contains"), thanks),
 							},
 						},
 						{
@@ -204,7 +204,7 @@ return {
 									nodes = {
 										{
 											n = G.UIT.T,
-											config = { text = "Art by:", colour = G.C.WHITE, scale = 0.6 }
+											config = { text = localize("qua_credits_art"), colour = G.C.WHITE, scale = 0.6 }
 										},
 									}
 								},

@@ -1025,6 +1025,25 @@ return {
 			qua_wh="WH-",
 			qua_what="WHAT", --do not translate so gedag WHAT sfx matches
 			qua_yankin_ex="Yankin!",
+
+			qua_credits_subtitle="SiIvaGunner Balatro Mod",
+			qua_credits_developed="Developed by:",
+			qua_credits_testing="Additional testing by:",
+			qua_credits_music="Music by:",
+			qua_credits_thanks="Special Thanks:",
+			qua_credits_unthanks="Special Unthanks:",
+			qua_credits_arrays="1-indexed arrays",
+			qua_credits_contains="No .contains() method",
+			qua_credits_art="Art by:",
+
+			qua_config_custom="Custom Music",
+			qua_config_custom_desc="Enables custom music for many Qualatro Jokers",
+			qua_config_resph_textures="RE:SPH Textures",
+			qua_config_resph_textures_desc="Jokers from the RE:SPH release use their original textures",
+			qua_config_restart="(Requires restart for this toggle to take effect)",
+			qua_config_arg="ARG Mode",
+			qua_config_arg_desc="Play the original RE:SPH release (December 2024)",
+			qua_config_previous_game="(Previous game will not be compatible)",
 		},
 		high_scores={},
 		labels={
