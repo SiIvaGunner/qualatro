@@ -240,7 +240,7 @@ local function get_jokerpos()
 	end
 	return jokerpos_res
 end
-local jokerpos = get_jokerpos()
+jokerpos = get_jokerpos()
 
 --NOTE: (Ahmayk) do not allow continue if ARG mode does not match save file
 local _super_can_continue = G.FUNCS.can_continue
