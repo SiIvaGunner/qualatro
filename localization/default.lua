@@ -5,6 +5,13 @@ return {
 			bl_wall={
 				name="The Chungus",
 			},
+			bl_qualatro_violet_voice={
+				name = "The Voice",
+				text = {
+					"Resets played",
+					"hand to level 1"
+				}
+			},
 		},
 		Edition={},
 		Enhanced={},
@@ -955,7 +962,24 @@ return {
 		achievement_descriptions={},
 		achievement_names={},
 		blind_states={},
-		challenge_names={},
+		challenge_names={
+			c_qualatro_QualatroOnly="Qualatro Only",
+			c_qualatro_Stingy="Stingy's Challenge",
+			c_qualatro_traffic_jam="Traffic Jam",
+			c_qualatro_jury_recital="Jury Recital",
+			c_qualatro_grand_theft_wario="Grand Theft Wario",
+			c_qualatro_common_rule="Trial Version",
+			c_qualatro_seven="7",
+			c_qualatro_brainrot="Brainrot",
+			c_qualatro_dancing_mad="Jimbo's Domain",
+			c_qualatro_kfad="KFAD Afterparty",
+			--NOTE: (Ahmayk) for reasons i don't quite understand these missingno titles only show up sometimes
+			--likely due to how we are adding the challenges within an event
+			--am not investigating or fixing because that's really cool
+			c_qualatro_missingno="[UI ERROR]",
+			c_qualatro_missingno_oops="PLEASE STOP",
+			c_qualatro_RESPH="Regarding Susie"
+		},
 		collabs={},
 		dictionary={
 			k_qualatro_contestant="Contestant",
@@ -1195,7 +1219,13 @@ return {
 			},
             ch_c_missingno_oops_4 = {
 				"doeh eni aerd delrs h aeehutealeyf sho ta mgoadcrd"
-			}
+			},
+			ch_c_rental_old_jokers = {
+			  'All {C:red}Low Quality{} Jokers are {C:attention}Perishable{} and {C:attention}Rental{}',
+			},
+			ch_c_first_shop_hq = {
+			  'First shop always contains a {C:green}High Quality{} Joker'
+			},
 		},
 	},
 }

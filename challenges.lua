@@ -1,10 +1,6 @@
 
 SMODS.Challenge {
 	key = "QualatroOnly",
-	loc_txt = {
-		key = "QualatroOnly",
-		name = 'Qualatro Only',
-	},
 	rules = {
 	custom = {
 			{id = 'qualatro_only'},
@@ -33,10 +29,6 @@ SMODS.Challenge {
 
 SMODS.Challenge {
 	key = "Stingy",
-	loc_txt = {
-		key = "stingy",
-		name = "Stingy's Challenge",
-	},
 	rules = {
 	custom = {
 			-- {id = 'qualatro_only'},
@@ -78,10 +70,6 @@ SMODS.Challenge {
 
 SMODS.Challenge {
 	key = "traffic_jam",
-	loc_txt = {
-		key = "traffic_jam",
-		name = "Traffic Jam",
-	},
 	rules = {
 	custom = {
 		},
@@ -117,10 +105,6 @@ SMODS.Challenge {
 
 SMODS.Challenge {
 	key = "jury_recital",
-	loc_txt = {
-		key = "jury_recital",
-		name = "Jury Recital",
-	},
 	rules = {
 	custom = {
 			{id = 'no_shop_jokers'},
@@ -170,10 +154,6 @@ SMODS.Challenge {
 
 SMODS.Challenge {
 	key = "grand_theft_wario",
-	loc_txt = {
-		key = "grand_theft_wario",
-		name = "Grand Theft Wario",
-	},
 	rules = {
 	custom = {
 		},
@@ -204,10 +184,6 @@ SMODS.Challenge {
 
 SMODS.Challenge {
 	key = "common_rule",
-	loc_txt = {
-		key = "common_rule",
-		name = "Trial Version",
-	},
 	rules = {
 	custom = {
 			{id = 'common_rule'},
@@ -273,10 +249,6 @@ end
 
 SMODS.Challenge {
 	key = "qualatro_seven",
-	loc_txt = {
-		key = "qualatro_seven",
-		name = "7",
-	},
 	rules = {
 	custom = {
 			{id = 'qualatro_seven_challenge'},
@@ -326,10 +298,6 @@ SMODS.Challenge {
 
 SMODS.Challenge {
 	key = "brainrot",
-	loc_txt = {
-		key = "brainrot",
-		name = "Brainrot",
-	},
 	rules = {
 	custom = {
 			{id = 'qualatro_brainrot'},
@@ -387,10 +355,6 @@ end
 
 SMODS.Challenge {
 	key = "dancing_mad",
-	loc_txt = {
-		key = "dancing_mad",
-		name = "Jimbo's Domain",
-	},
 	rules = {
 	custom = {
 			{id = 'qualatro_dancing_mad'},
@@ -421,10 +385,6 @@ SMODS.Challenge {
 
 SMODS.Challenge {
 	key = "kfad",
-	loc_txt = {
-		key = "kfad",
-		name = "KFAD Afterparty",
-	},
 	rules = {
 	custom = {
 			{id = 'kfad'},
@@ -483,10 +443,6 @@ G.E_MANAGER:add_event(Event({
 		if missingno and missingno.discovered then
 			SMODS.Challenge {
 				key = "missingno",
-				loc_txt = {
-					key = "missingno",
-					name = "[UI ERROR]",
-				},
 				rules = {
 					custom = {
 						{id = "missingno"}
@@ -517,10 +473,6 @@ G.E_MANAGER:add_event(Event({
     		if G.PROFILES[G.SETTINGS.profile].challenge_progress.completed['c_missingno'] then
 				SMODS.Challenge {
 					key = "missingno_oops",
-					loc_txt = {
-						key = "missingno_oops",
-						name = "PLEASE STOP",
-					},
 					rules = {
 						custom = {
 							{id = "missingno_oops_1"},

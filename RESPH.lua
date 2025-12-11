@@ -1296,14 +1296,7 @@ function run_resph()
   -- ##### BLIND
 
   SMODS.Blind {
-    key = "bl_violet_voice",
-    loc_txt = {
-      name = "The Voice",
-      text = {
-        "Resets played",
-        "hand to level 1"
-      }
-    },
+    key = "violet_voice",
     boss = {
       min = 1,
       max = 10,
@@ -1333,26 +1326,8 @@ function run_resph()
 
   -- G.CHALLENGES = {}
 
-  SMODS.process_loc_text(G.localization.misc.v_text, "ch_c_rental_old_jokers", {
-    key = "ch_c_rental_old_jokers",
-    name = {
-      'All {C:red}Low Quality{} Jokers are {C:attention}Perishable{} and {C:attention}Rental{}',
-    },
-  }, 'name')
-
-  SMODS.process_loc_text(G.localization.misc.v_text, "ch_c_first_shop_hq", {
-    key = "ch_c_rental_old_jokers",
-    name = {
-      'First shop always contains a {C:green}High Quality{} Joker'
-    },
-  }, 'name')
-
   SMODS.Challenge {
-    key = "RE:SPH",
-    loc_txt = {
-      key = "RE:SPH",
-      name = 'Regarding Susie',
-    },
+    key = "RESPH",
     rules = {
     custom = {
         {id = 'rental_old_jokers', value=true},
@@ -1542,5 +1517,4 @@ function run_resph()
     'fool', 'magician', 'high_priestess', 'empress', 'emperor', 'lovers', 'hermit', 'wheel_of_fortune','hanged_man', 'death', 'tower', 'strength', 'heirophant', 'star', 'temperance', 'judgement', 'moon', 'devil', 'sun', 'world', 'justice', 'chariot'
   }
   for a,b in ipairs(consumables)do SMODS.Consumable:take_ownership(b,{atlas='RESPHT'})end
-  SMODS.Blind:take_ownership('wall',{loc_txt={name="The Chungus"}},true)
 end
