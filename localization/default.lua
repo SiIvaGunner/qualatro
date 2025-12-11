@@ -25,6 +25,13 @@ return {
 					"{C:attention}#1#{} cards in deck"
 				}
 			},
+			j_qualatro_susie_arg = {
+				name = 'Susie',
+				text = {
+					"Unstable",
+					"#3#/3",
+				}
+			},
 			j_qualatro_grand_dad = {
 				name = 'Grand Dad',
 				text = {
@@ -33,6 +40,14 @@ return {
 					"resets if played hand",
 					"doesn't contain a {C:attention}7{}",
 					"{C:inactive}(Currently {C:mult}+#2#{C:inactive} Mult)",
+				}
+			},
+			j_qualatro_grand_dad_arg = {
+				name = 'Grand Dad',
+				text = {
+					"{C:red}+#1#{} Mult for each",
+					"played {C:attention}7{} when scored",
+					"{C:inactive}(Currently {C:mult}+#2#{C:inactive} Mult)"
 				}
 			},
 			j_qualatro_coconut_gun = {
@@ -56,6 +71,13 @@ return {
 				text = {
 					"{X:mult,C:white} X#1# {} Mult if there are",
 					"exactly {C:attention}3{} other Jokers"
+				}
+			},
+			j_qualatro_familiar_photo_arg = {
+				name = "Familiar Photo",
+				text = {
+					"{X:mult,C:white} X#1# {} Mult if there",
+					"are {C:attention}3{} other Jokers"
 				}
 			},
 			j_qualatro_reader = {
@@ -94,6 +116,15 @@ return {
 					"used during this run"
 				}
 			},
+			j_qualatro_fools_spirit_arg = {
+				name = "Fools' Spirit",
+				text = {
+					"When {C:attention}Blind{} is selected,",
+					"creates the last",
+					"{C:tarot}Tarot{} or {C:planet}Planet{} card",
+					"used during this run"
+				}
+			},
 			j_qualatro_siivagunner = {
 				name = "SiIvaGunner",
 				text = {
@@ -102,6 +133,13 @@ return {
 				},
 				unlock = {
 					"{E:1,s:1.3}?????"
+				}
+			},
+			j_qualatro_siivagunner_arg = {
+				name = "SiIvaGunner",
+				text = {
+					"Stone cards give {C:red}+#1#{} Mult",
+					"and {X:mult,C:white} X#2# {} Mult"
 				}
 			},
 			j_qualatro_twob = {
@@ -141,6 +179,14 @@ return {
 				text = {
 					"{C:attention}Stone{} cards are",
 					"considered {C:attention}Steel{} cards",
+				}
+			},
+			j_qualatro_siiva_ai_arg = {
+				name = "SiIvaGunner AI",
+				text = {
+					"{C:attention}Stone{} cards are",
+					"considered {C:attention}Steel{} cards",
+					"during scoring"
 				}
 			},
 			j_qualatro_inspector_gadget = {
@@ -953,7 +999,7 @@ return {
 			qua_taxed_ex="Taxed!",
 			qua_trapped_ex="Trapped!",
 			qua_wh="WH-",
-			qua_what="WHAT",
+			qua_what="WHAT", --do not translate so gedag WHAT sfx matches
 			qua_yankin_ex="Yankin!",
 		},
 		high_scores={},

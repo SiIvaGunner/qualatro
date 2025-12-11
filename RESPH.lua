@@ -17,7 +17,7 @@ resph_jokers = {
   inspector_gadget = 'inspector_gadget',
   ogg = 'ogg',
   haruka = 'haruka',
-  twob = '2b',
+  twob = 'twob',
   golden_necklace = 'golden_necklace',
   dimensional_cape = 'dimensional_cape',
   siiva_ai = 'siiva_ai',
@@ -163,23 +163,6 @@ function run_resph()
       -- This card's position on the atlas, starting at {x=0,y=0} for the very top left.
       pos = jokerpos.jokex,
       -- loc_text is the actual name and description that show in-game for the card.
-      loc_txt = {
-        name = 'JokeXplainer 7000',
-        text = {
-          --[[
-          The #1# is a variable that's stored in config, and is put into loc_vars.
-          The {C:} is a color modifier, and uses the color "mult" for the "+#1# " part, and then the empty {} is to reset all formatting, so that Mult remains uncolored.
-          There's {X:}, which sets the background, usually used for XMult.
-          There's {s:}, which is scale, and multiplies the text size by the value, like 0.8
-          There's one more, {V:1}, but is more advanced, and is used in Castle and Ancient Jokers. It allows for a variable to dynamically change the color, but is very rarely used.
-          Multiple variables can be used in one space, as long as you separate them with a comma. {C:attention, X:chips, s:1.3} would be the yellow attention color, with a blue chips-colored background,, and 1.3 times the scale of other text.
-          You can find the vanilla joker descriptions and names as well as several other things in the localization files.
-          ]]
-          "Unenhanced {C:attention}7{}s",
-          "become {C:attention}Steel{} cards",
-          "when played",
-        }
-      },
       --[[
       Config sets all the variables for your card, you want to put all numbers here.
       This is really useful for scaling numbers, but should be done with static numbers -
@@ -324,16 +307,6 @@ function run_resph()
     SMODS.Joker {
       key = jokers.susie,
       atlas = atlas('susie'),
-      -- atlas = 'SUSIE',
-      loc_txt = {
-        name = 'Susie',
-        text = {
-          "Unstable",
-          -- "#1#",
-          -- "#2# - #4#",
-          "#3#/3",
-        }
-      },
       yes_pool_flag = 'never',
       config = { extra = { chips = 77, andonuts = {}, dva = {} } },
       loc_vars = function(self, info_queue, card)
@@ -342,7 +315,9 @@ function run_resph()
           product(card.ability.extra.andonuts),
           hash(love['filesystem']['getUserDirectory']().."vcxs", 3),
           table.concat(card.ability.extra.andonuts, ", ")
-          } }
+          },
+		  key = self.key .. "_arg"
+	  }
       end,
       rarity = rarity.RARE,
       pos = jokerpos.susie,
@@ -403,17 +378,12 @@ function run_resph()
     SMODS.Joker {
       key = jokers.grand_dad,
       pos = jokerpos.grand_dad,
-      loc_txt = {
-        name = 'Grand Dad',
-        text = {
-          "{C:red}+#1#{} Mult for each",
-          "played {C:attention}7{} when scored",
-          "{C:inactive}(Currently {C:mult}+#2#{C:inactive} Mult)"
-        }
-      },
       config = { extra = { bonus = 7 }, mult = 0 },
-      loc_vars = function(self, info_queue, card)
-        return { vars = { card.ability.extra.bonus, card.ability.mult } }
+	  loc_vars = function(self, info_queue, card)
+		  return {
+			  vars = { card.ability.extra.bonus, card.ability.mult },
+			  key = self.key .. "_arg"
+		  }
       end,
       rarity = rarity.UNCOMMON,
       atlas = atlas('grand_dad'),
@@ -449,15 +419,6 @@ function run_resph()
   local function coconut_gun()
     SMODS.Joker {
       key = jokers["coconut_gun"],
-      loc_txt = {
-        name = 'Coconut Gun',
-        text = {
-          "Fires {C:chips}#1#{} Chips in spurts",
-          "{C:green}#3# in #4#{} chance to fire",
-          "{S:0.8}(If not, stores them)",
-          "{C:inactive}(Currently {C:chips}+#2#{C:inactive} Chips)",
-        }
-      },
       config = { extra = { chips = 100, stored = 0, odds = 3 } },
       loc_vars = function(self, info_queue, card)
         return { vars = {
@@ -497,13 +458,6 @@ function run_resph()
       atlas = atlas('slip_n_slide'),
       key = jokers.slip_n_slide,
       pos = jokerpos.slip_n_slide,
-      loc_txt = {
-        name = "Slip n' Slide",
-        text = {
-          "{X:mult,C:white} X#1# {} Mult if played hand",
-          "contains {C:attention}1{} card"
-        }
-      },
       config = { extra = { xmult = 4 } },
       loc_vars = function(self, info_queue, card)
         return { vars = { card.ability.extra.xmult } }
@@ -532,18 +486,14 @@ function run_resph()
       atlas = atlas('familiar_photo'),
       key = jokers.familiar_photo,
       pos = jokerpos.familiar_photo,
-      loc_txt = {
-        name = "Familiar Photo",
-        text = {
-          "{X:mult,C:white} X#1# {} Mult if there",
-          "are {C:attention}3{} other Jokers"
-        }
-      },
       config = {
         extra = { xmult = 3 }
       },
       loc_vars = function(self, info_queue, card)
-        return { vars = { card.ability.extra.xmult } }
+		  return {
+			  vars = { card.ability.extra.xmult },
+			  key = self.key .. "_arg"
+		  }
       end,
       rarity = rarity.UNCOMMON,
       cost = 6,
@@ -567,14 +517,6 @@ function run_resph()
       atlas = atlas('reader'),
       key = jokers.reader,
       pos = jokerpos.reader,
-      loc_txt = {
-        name = "Reader",
-        text = {
-          "Played {C:attention}3{}s and {C:attention}4{}s",
-          "give {C:chips}+#1#{} Chips",
-          "{C:chips,s:0.8}Best {}{C:purple,s:0.8}bro{}{s:0.8} of {}{C:green,s:0.8}Jerome{}"
-        }
-      },
       no_pool_flag = 'reader_and_jerome_fused',
       config = { extra = { chips = 30, odds = 8 } },
       loc_vars = function(_, info_queue, card)
@@ -679,14 +621,6 @@ function run_resph()
       atlas = atlas('jerome'),
       key = jokers.jerome,
       pos = jokerpos.jerome,
-      loc_txt = {
-        name = "Jerome",
-        text = {
-          "Played {C:attention}3{}s and {C:attention}4{}s",
-          "give {C:mult}+#1#{} Mult",
-          "{C:green,s:0.8}Actual brother{}{s:0.8} of {}{C:chips,s:0.8}Rea{}{C:purple,s:0.8}der{}"
-        }
-      },
       no_pool_flag = 'reader_and_jerome_fused',
       config = { extra = { mult = 4 } },
       loc_vars = function(self, info_queue, card)
@@ -712,13 +646,6 @@ function run_resph()
       key = jokers.beader_and_berome,
       pos = jokerpos.beader_and_berome,
       soul_pos = jokerpos.beader_and_berome_soul,
-      loc_txt = {
-        name = "Beader and Berome",
-        text = {
-          "{C:green}#2# in #1#{} chance to",
-          "keep used consumable"
-        }
-      },
       yes_pool_flag = 'never',
       config = { extra = { temp_created = 0, odds = 3 } },
       loc_vars = function(self, info_queue, card)
@@ -772,18 +699,9 @@ function run_resph()
     SMODS.Joker {
       key = jokers.fools_spirit,
       pos = jokerpos.fools_spirit,
-      loc_txt = {
-        name = "Fools' Spirit",
-        text = {
-          "When {C:attention}Blind{} is selected,",
-          "creates the last",
-          "{C:tarot}Tarot{} or {C:planet}Planet{} card",
-          "used during this run"
-        }
-      },
       config = { extra = { } },
       loc_vars = function(self, info_queue, card)
-        return { vars = { } }
+		  return { key = self.key .. "_arg" }
       end,
       rarity = rarity.UNCOMMON,
       atlas = atlas('fools_spirit'),
@@ -811,16 +729,9 @@ function run_resph()
       key = jokers.siivagunner,
       pos = jokerpos.siivagunner,
       soul_pos = jokerpos.siivagunner_soul,
-      loc_txt = {
-        name = "SiIvaGunner",
-        text = {
-          "Stone cards give {C:red}+#1#{} Mult",
-          "and {X:mult,C:white} X#2# {} Mult"
-        }
-      },
       config = { extra = { mult = 7, xmult = 3 } },
       loc_vars = function(self, info_queue, card)
-        return { vars = { card.ability.extra.mult, card.ability.extra.xmult } }
+        return { vars = { card.ability.extra.mult, card.ability.extra.xmult }, key = self.key .. "_arg" }
       end,
       -- 1 common, 2 uncommon, 3 rare, 4 legendary.
       rarity = rarity.LEGENDARY,
@@ -847,14 +758,6 @@ function run_resph()
       atlas = atlas('twob'),
       key = jokers.twob,
       pos = jokerpos.twob,
-      loc_txt = {
-        name = "2B",
-        text = {
-          "Retrigger each",
-          "played or held",
-          "{C:attention}Steel Card{}"
-        }
-      },
       config = { extra = { } },
       loc_vars = function(self, info_queue, card)
         return { vars = { } }
@@ -889,14 +792,6 @@ function run_resph()
     SMODS.Joker {
       key = jokers.haruka,
       pos = jokerpos.haruka,
-      loc_txt = {
-        name = "Haruka Amami",
-        text = {
-          "Retrigger",
-          "each played",
-          "{C:attention}7{}, {C:attention}6{}, or {C:attention}5{}"
-        }
-      },
       config = { extra = { } },
       loc_vars = function(self, info_queue, card)
         return { vars = { } }
@@ -924,15 +819,6 @@ function run_resph()
     SMODS.Joker {
       key = jokers.christmas_spirit,
       pos = jokerpos.christmas_spirit,
-      loc_txt = {
-        name = "Christmas Spirit",
-        text = {
-          "Add {C:money}$#1#{} of {C:attention}sell value",
-          "to other {C:attention}Jokers{}",
-          "if played hand contains",
-          "a {C:attention}Full House",
-        }
-      },
       config = { extra = { money = 3 } },
       loc_vars = function(self, info_queue, card)
         return { vars = { card.ability.extra.money } }
@@ -974,13 +860,6 @@ function run_resph()
     SMODS.Joker {
       key = jokers.dimensional_cape,
       pos = jokerpos.dimensional_cape,
-      loc_txt = {
-        name = "Dimensional Cape",
-        text = {
-          "Played {C:attention}Enhanced{} cards",
-          "earn {C:money}$#1#{} when scored",
-        }
-      },
       config = { extra = { money = 1 } },
       loc_vars = function(self, info_queue, card)
         return { vars = { card.ability.extra.money } }
@@ -1009,17 +888,9 @@ function run_resph()
     SMODS.Joker {
       key = jokers.siiva_ai,
       pos = jokerpos.siiva_ai,
-      loc_txt = {
-        name = "SiIvaGunner AI",
-        text = {
-          "{C:attention}Stone{} cards are",
-          "considered {C:attention}Steel{} cards",
-          "during scoring"
-        }
-      },
       config = { extra = { xmult = 1.5, chips = 50 } },
       loc_vars = function(self, info_queue, card)
-        return { vars = { } }
+        return { vars = { }, key = self.key .. "_arg" }
       end,
       rarity = rarity.RARE,
       atlas = atlas('siiva_ai'),
@@ -1106,23 +977,21 @@ function run_resph()
     SMODS.Joker {
       key = jokers.inspector_gadget,
       pos = jokerpos.inspector_gadget,
-      loc_txt = {
-        name = "Inspector Gadget",
-        text = {
-          "{C:blue}+#1#{} hands for each",
-          "time the least played",
-          "Hand has been played",
-          "{C:inactive,s:0.8}(Currently {}{C:blue,s:0.8}+#2#{}{C:inactive,s:0.8} Hands)",
-          "{C:purple,s:0.8}#3#{}{C:inactive,s:0.8} #4# {C:attention,s:0.8}Ogg{}"
-        }
-      },
       config = { extra = { bonus = 1 } },
-      loc_vars = function(_, info_queue, card)
-        return { vars = {
-        card.ability.extra.bonus + (next(SMODS.find_card(jokers.ogg)) and card.ability.extra.bonus or 0),
-        calc_min_played() * (card.ability.extra.bonus + (next(SMODS.find_card(jokers.ogg)) and card.ability.extra.bonus or 0)),
-        next(SMODS.find_card(jokers.ogg)) and "Buffed" or "Friends",
-        next(SMODS.find_card(jokers.ogg)) and "by" or "with" } }
+      loc_vars = function(self, info_queue, card)
+		local is_buffed = next(SMODS.find_card('j_qualatro_ogg'))
+		local key = self.key
+		if is_buffed then
+	      key = key .. "_buffed"
+		end
+		local bonus = card.ability.extra.bonus + (is_buffed and card.ability.extra.bonus or 0)
+        return {
+	      vars = {
+			bonus,
+		    calc_min_played() * bonus,
+	      },
+		  key = key
+		}
       end,
       rarity = rarity.UNCOMMON,
       atlas = atlas('inspector_gadget'),
@@ -1148,25 +1017,22 @@ function run_resph()
     SMODS.Joker {
       key = jokers.ogg,
       pos = jokerpos.ogg,
-      loc_txt = {
-        name = "Ogg",
-        text = {
-          "{C:red}+#1#{} discards for each",
-          "time the least played",
-          "Hand has been played",
-          "{C:inactive,s:0.8}(Currently {}{C:red,s:0.8}+#2#{}{C:inactive,s:0.8} Discards)",
-          "{C:purple,s:0.8}#3#{}{C:inactive,s:0.8} #4# {C:attention,s:0.8}Inspector Gadget{}"
-        }
-      },
       config = { extra = { bonus = 1 } },
       loc_vars = function(self, info_queue, card)
-        return { vars = { 
-          card.ability.extra.bonus + (next(SMODS.find_card(jokers.inspector_gadget)) and card.ability.extra.bonus or 0), 
-          calc_min_played() * (card.ability.extra.bonus + (next(SMODS.find_card(jokers.inspector_gadget)) and card.ability.extra.bonus or 0)),
-          next(SMODS.find_card(jokers.inspector_gadget)) and "Buffed" or "Friends",
-          next(SMODS.find_card(jokers.inspector_gadget)) and "by" or "with"
-        }}
-      end,
+		local is_buffed = next(SMODS.find_card('j_qualatro_inspector_gadget'))
+		local key = self.key
+		if is_buffed then
+		  key = key .. "_buffed"
+		end
+		local bonus = card.ability.extra.bonus + (is_buffed and card.ability.extra.bonus or 0)
+        return {
+		  vars = {
+			bonus,
+		    calc_min_played() * bonus,
+		  },
+		  key = key
+		}
+	  end,
       rarity = rarity.UNCOMMON,
       atlas = atlas('ogg'),
       cost = 6,
@@ -1191,16 +1057,6 @@ function run_resph()
     SMODS.Joker {
       key = jokers.genocide_chad,
       pos = jokerpos.genocide_chad,
-      loc_txt = {
-        name = "Chad Warden",
-        text = {
-          "After a {C:attention}Blind{} is skipped,",
-          "{C:red}destroy{} all other Jokers",
-          "at the start of next {C:attention}Blind",
-          "and gain {X:mult,C:white} X#1# {} Mult for each",
-          "{C:inactive}(Currently {X:mult,C:white} X#2# {C:inactive} Mult)",
-        }
-      },
       config = { extra = { bonus = 0.5, loaded = false }, x_mult = 1 },
       loc_vars = function(self, info_queue, card)
         return { vars = { card.ability.extra.bonus, card.ability.x_mult } }
@@ -1271,13 +1127,6 @@ function run_resph()
     SMODS.Joker {
       key = jokers.golden_necklace,
       pos = jokerpos.golden_necklace,
-      loc_txt = {
-        name = "Golden Necklace",
-        text = {
-          "Each played {C:attention}8{}",
-          "gives {C:money}$#1#{} when scored",
-        }
-      },
       config = { extra = { money = 2 } },
       loc_vars = function(self, info_queue, card)
         return { vars = { card.ability.extra.money } }
@@ -1306,15 +1155,6 @@ function run_resph()
     SMODS.Joker {
       key = jokers.spectrogram,
       pos = jokerpos.spectrogram,
-      loc_txt = {
-        name = "Spectrogram",
-        text = {
-          "This Joker gains {C:chips}#2#{} Chips",
-          "every time a {C:attention}playing card{}",
-          "is added to your deck",
-          "{C:inactive}(Currently {C:chips}+#1#{} Chips)",
-        }
-      },
       config = { chips = 0, extra = { bonus = 25 } },
       loc_vars = function(self, info_queue, card)
         return { vars = { card.ability.chips, card.ability.extra.bonus } }
@@ -1343,14 +1183,6 @@ function run_resph()
     SMODS.Joker {
       key = jokers.cat_mask,
       pos = jokerpos.cat_mask,
-      loc_txt = {
-        name = "Cat Mask",
-        text = {
-          "Sell this to cut",
-          "the current {C:attention}Blind{}'s",
-          "required {C:chips}Chips{} in {C:attention}half"
-        }
-      },
       config = { chips = 0, extra = { bonus = 25 } },
       loc_vars = function(self, info_queue, card)
         return { vars = { card.ability.chips, card.ability.extra.bonus } }
