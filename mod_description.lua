@@ -34,6 +34,8 @@ local P = {
 local minor_contributor = 0.3
 local tester = 0.25
 local thanks = 0.25
+local title_large = 0.65
+local title_small = 0.4
 
 local function credit(person, scale)
 	return {
@@ -79,17 +81,17 @@ return {
 									nodes = {
 										{
 											n = G.UIT.T,
-											config = { text = "Qualatro", colour = G.C.WHITE, scale = 1, }
+											config = { text = "Qualatro", colour = G.C.WHITE, scale = 1.2, }
 										},
 									}
 								},
 								{
 									n = G.UIT.R,
-									config = { align = "tm", colour = dc(G.C.MONEY) },
+									config = { align = "tm", colour = dc(G.C.MONEY), padding = 0.1  },
 									nodes = {
 										{
 											n = G.UIT.T,
-											config = { text = localize("qua_credits_subtitle"), colour = G.C.WHITE, scale = 0.4, },
+											config = { text = localize("qua_credits_subtitle"), colour = G.C.WHITE, scale = title_small },
 										},
 									}
 								},
@@ -111,7 +113,7 @@ return {
 									nodes = {
 										{
 											n = G.UIT.T,
-											config = { text = localize("qua_credits_developed"), colour = G.C.WHITE, scale = 0.6 }
+											config = { text = localize("qua_credits_developed"), colour = G.C.WHITE, scale = title_large }
 										},
 									}
 								},
@@ -128,7 +130,7 @@ return {
 									nodes = {
 										{
 											n = G.UIT.T,
-											config = { text = localize("qua_credits_testing"), colour = G.C.WHITE, scale = 0.4 }
+											config = { text = localize("qua_credits_testing"), colour = G.C.WHITE, scale = title_small }
 										},
 									}
 								},
@@ -153,7 +155,7 @@ return {
 									nodes = {
 										{
 											n = G.UIT.T,
-											config = { text = localize("qua_credits_music"), colour = G.C.WHITE, scale = 0.6 }
+											config = { text = localize("qua_credits_music"), colour = G.C.WHITE, scale = title_large }
 										},
 									}
 								},
@@ -169,7 +171,7 @@ return {
 									nodes = {
 										{
 											n = G.UIT.T,
-											config = { text = localize("qua_credits_thanks"), colour = G.C.WHITE, scale = 0.4 }
+											config = { text = localize("qua_credits_thanks"), colour = G.C.WHITE, scale = title_small }
 										},
 									}
 								},
@@ -186,7 +188,7 @@ return {
 									nodes = {
 										{
 											n = G.UIT.T,
-											config = { text = localize("qua_credits_unthanks"), colour = G.C.WHITE, scale = 0.4 }
+											config = { text = localize("qua_credits_unthanks"), colour = G.C.WHITE, scale = title_small }
 										},
 									}
 								},
@@ -204,7 +206,7 @@ return {
 									nodes = {
 										{
 											n = G.UIT.T,
-											config = { text = localize("qua_credits_art"), colour = G.C.WHITE, scale = 0.6 }
+											config = { text = localize("qua_credits_art"), colour = G.C.WHITE, scale = title_large }
 										},
 									}
 								},
