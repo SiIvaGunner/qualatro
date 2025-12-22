@@ -5,22 +5,37 @@ priority = -1
 
 # Temporary card.lua "return nil, true" patches so that jokers properly "trigger"
 
+# NOTE: (Ahmayk) these will only be patched in SMODS version 1.0.0~BETA-1016c
+#these intentionally fail on the newer SMODS where this issue is fixed
+
 # Flash Card
 [[patches]]
 [patches.pattern]
 target = "card.lua"
 pattern = '''
-            if self.ability.name == 'Flash Card' and not context.blueprint then
-                SMODS.scale_card(self, {
-                    ref_table = self.ability,
-                    ref_value = "mult",
-                    scalar_value = "extra",
-                    message_key = 'a_mult',
-                    message_colour = G.C.RED
-                })
+if self.ability.name == 'Flash Card' and not context.blueprint then
+SMODS.scale_card(self, {
+		ref_table = self.ability,
+		ref_value = "mult",
+		scalar_value = "extra",
+		message_key = 'a_mult',
+		message_colour = G.C.RED
+		})
+end
 '''
-position = "after"
-payload = "return nil, true"
+position = "at"
+payload = '''
+if self.ability.name == 'Flash Card' and not context.blueprint then
+SMODS.scale_card(self, {
+		ref_table = self.ability,
+		ref_value = "mult",
+		scalar_value = "extra",
+		message_key = 'a_mult',
+		message_colour = G.C.RED
+		})
+return nil, true
+end
+'''
 match_indent = true
 
 # Green Joker
@@ -28,20 +43,35 @@ match_indent = true
 [patches.pattern]
 target = "card.lua"
 pattern = '''
-                    SMODS.scale_card(self, {
-                        ref_table = self.ability,
-                        ref_value = "mult",
-                        scalar_table = self.ability.extra,
-                        scalar_value = "discard_sub",
-                        operation = function(ref_table, ref_value, initial, change)
-                            ref_table[ref_value] = math.max(0, initial - change)
-                        end,
-                        message_key = 'a_mult_minus',
-                        message_colour = G.C.RED
-                    })
+SMODS.scale_card(self, {
+		ref_table = self.ability,
+		ref_value = "mult",
+		scalar_table = self.ability.extra,
+		scalar_value = "discard_sub",
+		operation = function(ref_table, ref_value, initial, change)
+		ref_table[ref_value] = math.max(0, initial - change)
+		end,
+		message_key = 'a_mult_minus',
+		message_colour = G.C.RED
+		})
+end
 '''
-position = "after"
-payload = "return nil, true"
+position = "at"
+payload = '''
+SMODS.scale_card(self, {
+		ref_table = self.ability,
+		ref_value = "mult",
+		scalar_table = self.ability.extra,
+		scalar_value = "discard_sub",
+		operation = function(ref_table, ref_value, initial, change)
+		ref_table[ref_value] = math.max(0, initial - change)
+		end,
+		message_key = 'a_mult_minus',
+		message_colour = G.C.RED
+		})
+return nil, true
+end
+'''
 match_indent = true
 
 # Popcorn
@@ -49,17 +79,29 @@ match_indent = true
 [patches.pattern]
 target = "card.lua"
 pattern = '''
-                        SMODS.scale_card(self, {
-                            ref_table = self.ability,
-                            ref_value = "mult",
-                            scalar_value = "extra",
-                            message_key = 'a_mult_minus',
-                            colour = G.C.MULT,
-                            operation = '-'
-                        })
+SMODS.scale_card(self, {
+		ref_table = self.ability,
+		ref_value = "mult",
+		scalar_value = "extra",
+		message_key = 'a_mult_minus',
+		colour = G.C.MULT,
+		operation = '-'
+		})
+end
 '''
-position = "after"
-payload = "return nil, true"
+position = "at"
+payload = '''
+SMODS.scale_card(self, {
+		ref_table = self.ability,
+		ref_value = "mult",
+		scalar_value = "extra",
+		message_key = 'a_mult_minus',
+		colour = G.C.MULT,
+		operation = '-'
+		})
+return nil, true
+end
+'''
 match_indent = true
 
 # Wee Joker
@@ -67,18 +109,31 @@ match_indent = true
 [patches.pattern]
 target = "card.lua"
 pattern = '''
-                        SMODS.scale_card(self, {
-                            ref_table = self.ability.extra,
-                            ref_value = "chips",
-                            scalar_value = "chip_mod",
-                            scaling_message = {
-                                extra = {focus = self, message = localize('k_upgrade_ex')},
-                                colour = G.C.CHIPS
-                            }
-                        })
+SMODS.scale_card(self, {
+		ref_table = self.ability.extra,
+		ref_value = "chips",
+		scalar_value = "chip_mod",
+		scaling_message = {
+		extra = {focus = self, message = localize('k_upgrade_ex')},
+		colour = G.C.CHIPS
+		}
+		})
+end
 '''
-position = "after"
-payload = "return nil, true"
+position = "at"
+payload = '''
+SMODS.scale_card(self, {
+		ref_table = self.ability.extra,
+		ref_value = "chips",
+		scalar_value = "chip_mod",
+		scaling_message = {
+		extra = {focus = self, message = localize('k_upgrade_ex')},
+		colour = G.C.CHIPS
+		}
+		})
+return nil, true
+end
+''' 
 match_indent = true
 
 # Spare Trousers
@@ -86,15 +141,25 @@ match_indent = true
 [patches.pattern]
 target = "card.lua"
 pattern = '''
-                        SMODS.scale_card(self, {
-                            ref_table = self.ability,
-                            ref_value = "mult",
-                            scalar_value = "extra",
-                            message_colour = G.C.RED
-                        })
+SMODS.scale_card(self, {
+		ref_table = self.ability,
+		ref_value = "mult",
+		scalar_value = "extra",
+		message_colour = G.C.RED
+		})
+end
 '''
-position = "after"
-payload = "return nil, true"
+position = "at"
+payload = '''
+SMODS.scale_card(self, {
+		ref_table = self.ability,
+		ref_value = "mult",
+		scalar_value = "extra",
+		message_colour = G.C.RED
+		})
+return nil, true
+end
+''' 
 match_indent = true
 
 # Square Joker & Runner
@@ -102,14 +167,23 @@ match_indent = true
 [patches.pattern]
 target = "card.lua"
 pattern = '''
-                        SMODS.scale_card(self, {
-                            ref_table = self.ability.extra,
-                            ref_value = "chips",
-                            scalar_value = "chip_mod",
-                        })
+SMODS.scale_card(self, {
+		ref_table = self.ability.extra,
+		ref_value = "chips",
+		scalar_value = "chip_mod",
+		})
+end
 '''
-position = "after"
-payload = "return nil, true"
+position = "at"
+payload = '''
+SMODS.scale_card(self, {
+		ref_table = self.ability.extra,
+		ref_value = "chips",
+		scalar_value = "chip_mod",
+		})
+return nil, true
+end
+'''
 match_indent = true
 
 # Ride the Bus
@@ -117,15 +191,25 @@ match_indent = true
 [patches.pattern]
 target = "card.lua"
 pattern = '''
-                            SMODS.scale_card(self, {
-                                ref_table = self.ability,
-                                ref_value = "mult",
-                                scalar_value = "extra",
-                                no_message = true
-                            })
+SMODS.scale_card(self, {
+		ref_table = self.ability,
+		ref_value = "mult",
+		scalar_value = "extra",
+		no_message = true
+		})
+end
 '''
-position = "after"
-payload = "return nil, true"
+position = "at"
+payload = '''
+SMODS.scale_card(self, {
+		ref_table = self.ability,
+		ref_value = "mult",
+		scalar_value = "extra",
+		no_message = true
+		})
+return nil, true
+end
+'''
 match_indent = true
 
 # Green Joker, again
@@ -133,15 +217,25 @@ match_indent = true
 [patches.pattern]
 target = "card.lua"
 pattern = '''
-                        SMODS.scale_card(self, {
-                            ref_table = self.ability,
-                            ref_value = "mult",
-                            scalar_table = self.ability.extra,
-                            scalar_value = "hand_add"
-                        })
+SMODS.scale_card(self, {
+		ref_table = self.ability,
+		ref_value = "mult",
+		scalar_table = self.ability.extra,
+		scalar_value = "hand_add"
+		})
+end
 '''
-position = "after"
-payload = "return nil, true"
+position = "at"
+payload = '''
+SMODS.scale_card(self, {
+		ref_table = self.ability,
+		ref_value = "mult",
+		scalar_table = self.ability.extra,
+		scalar_value = "hand_add"
+		})
+return nil, true
+end
+'''
 match_indent = true
 
 # Ice Cream
@@ -149,15 +243,26 @@ match_indent = true
 [patches.pattern]
 target = "card.lua"
 pattern = '''
-                            SMODS.scale_card(self, {
-                                ref_table = self.ability.extra,
-                                ref_value = "chips",
-                                scalar_value = "chip_mod",
-                                operation = "-",
-                                message_key = 'a_chips_minus'
-                            })
+SMODS.scale_card(self, {
+		ref_table = self.ability.extra,
+		ref_value = "chips",
+		scalar_value = "chip_mod",
+		operation = "-",
+		message_key = 'a_chips_minus'
+		})
+end
 '''
-position = "after"
-payload = "return nil, true"
+position = "at"
+payload = '''
+SMODS.scale_card(self, {
+		ref_table = self.ability.extra,
+		ref_value = "chips",
+		scalar_value = "chip_mod",
+		operation = "-",
+		message_key = 'a_chips_minus'
+		})
+return nil, true
+end
+'''
 match_indent = true
 
