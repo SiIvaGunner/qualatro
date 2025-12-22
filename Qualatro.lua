@@ -2463,10 +2463,16 @@ local function slider()
 					)
 					and pseudorandom("slider") < (G.GAME.probabilities.normal or 1) / card.ability.extra.odds
 				then
-					card_eval_status_text(ocard, 'extra', nil, nil, nil, {message = localize("k_again_ex")})
-					return {
+					--NOTE: (Ahmayk) something changed after this version regarding handling messages on individual context
+					--this gives correct behavior in both smods version at time of release and 1.0.0-beta-1221a
+					if SMODS.version == "1.0.0~BETA-1016c" or not context.other_context.individual then
+						card_eval_status_text(ocard, 'extra', nil, nil, nil, {message = localize("k_again_ex")})
+					end
+					local ret = {
 						repetitions = 1,
+						message_card = ocard,
 					}
+					return ret
 				end
 			end
 		end,
