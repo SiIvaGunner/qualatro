@@ -8120,7 +8120,7 @@ function Game:update(dt)
 
 		local active_joker_key_table = {}
 		for _, area in ipairs(SMODS.get_card_areas('jokers')) do
-			if area then
+			if area and area.cards then
 				for _, card in pairs(area.cards) do
 					if card and type(card) == 'table' and not card.debuff then
 						local key = G.qualatro_music_copy_table[card.config.center.key] or card.config.center.key
