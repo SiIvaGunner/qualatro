@@ -6667,13 +6667,15 @@ local function bites_the_dust()
 							draw_card(G.hand, G.deck)
 							playing_card_joker_effects({_card})
 
-							if i == card.ability.extra.copy_count then
-								G.GAME.last_destroyed_inactive_card_data = nil
-							end
 							return true
 						end
 					})) 
 				end
+			elseif context.round_eval then
+				if i == card.ability.extra.copy_count then
+					G.GAME.last_destroyed_inactive_card_data = nil
+				end
+				return true
 			end
 		end
 	}
