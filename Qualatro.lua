@@ -6610,7 +6610,7 @@ local function bites_the_dust()
 				"{C:inactive,s:0.7}Rightmost cards always destroyed last{}",
 			}
 		},
-		config = { extra = { copy_count = 3 } },
+		config = { extra = { copy_count = 3, has_triggered = false } },
 		loc_vars = function(self, info_queue, card)
 			local key = self.key
 			local last_destroyed_card_name = ""
@@ -6667,12 +6667,16 @@ local function bites_the_dust()
 							draw_card(G.hand, G.deck)
 							playing_card_joker_effects({_card})
 
-							if i == card.ability.extra.copy_count then
-								G.GAME.last_destroyed_inactive_card_data = nil
-							end
+							card.ability.extra.has_triggered = true
+
 							return true
 						end
 					})) 
+				end
+			elseif context.round_eval then
+				if card.ability.extra.has_triggered then
+					G.GAME.last_destroyed_inactive_card_data = nil
+					card.ability.extra.has_triggered = false
 				end
 			end
 		end
