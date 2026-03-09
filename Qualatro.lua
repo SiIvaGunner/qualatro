@@ -8,6 +8,10 @@ SMODS.optional_features.retrigger_joker = true
 -- Causes bad slowdown
 -- SMODS.optional_features.cardareas.deck = true
 
+if JokerDisplay then
+    assert(SMODS.load_file("QualatroJDisplay.lua"))()
+end
+
 SMODS.Atlas {
 	key = "balatro",
 		raw_key = true,
