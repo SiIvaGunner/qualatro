@@ -494,7 +494,8 @@ jd_def["j_qualatro_beta_mix"] = {	-- Beta Mix
         colour = G.C.CHIPS,
         retrigger_type = "mult"
     }, {
-        text = " ",
+        ref_table = "card.joker_display_values",
+        ref_value = "blank",
         colour = G.C.CHIPS,
         retrigger_type = "mult"
     }, {
@@ -514,6 +515,375 @@ jd_def["j_qualatro_beta_mix"] = {	-- Beta Mix
     end        
         card.joker_display_values.xmultplus = betamix and "X" or ""
         card.joker_display_values.xmult = betamix and card.ability.extra.x_mult or ""
-        card.joker_display_values.scale = betamix and 1 or 0
-end    
+        card.joker_display_values.blank = betamix and " " or ""        
+    end,
+    style_function = function(card, text, reminder_text, extra)
+        local betamix = false
+				if card.rank >= 2 and G.jokers.cards[card.rank - 1].ability.name == 'Joker' then
+                    betamix = true
+    end                
+        if text and text.children[4] then
+            text.children[4].config.colour = betamix and G.C.MULT or G.C.CLEAR
+    end
+        return false
+    end
+}
+
+jd_def["j_qualatro_papyrus"] = { -- Papyrus
+        text = {
+            { text = "+" },
+            { ref_table = "card.joker_display_values", ref_value = "count", retrigger_type = "mult" },
+        },
+        text_config = { colour = G.C.RED },        
+        calc_function = function(card)
+            card.joker_display_values.count = card.ability.extra.active and card.ability.mult or 0
+        end
+}
+
+jd_def["j_qualatro_lady"] = { -- Lady
+}
+
+jd_def["j_qualatro_cryptid_hunt"] = { -- Cryptid Hunt
+}
+
+jd_def["j_qualatro_slider"] = { -- Slider
+    extra = {{{
+        text = "("
+    }, {
+        ref_table = "card.joker_display_values",
+        ref_value = "odds"
+    }, {
+        text = ")"
+    }}},
+    extra_config = {
+        colour = G.C.GREEN,
+        scale = 0.3
+    },
+    calc_function = function(card)
+        local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'slider')
+        card.joker_display_values.odds = localize {
+            type = 'variable',
+            key = "jdis_odds",
+            vars = {numerator, denominator}
+        }
+    end
+}
+
+jd_def["j_qualatro_stingy"] = { -- Stingy
+}
+
+jd_def["j_qualatro_get_lucky"] = { -- Get Lucky
+    extra = {{{
+        text = "("
+    }, {
+        ref_table = "card.joker_display_values",
+        ref_value = "odds"
+    }, {
+        text = ")"
+    }}},
+    extra_config = {
+        colour = G.C.GREEN,
+        scale = 0.3
+    },
+    calc_function = function(card)
+        local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'getlucky')
+        card.joker_display_values.odds = localize {
+            type = 'variable',
+            key = "jdis_odds",
+            vars = {numerator, denominator}
+        }
+    end
+}
+
+jd_def["j_qualatro_antonymph"] = { -- The Antonymph
+        text = {
+            { text = "+" },
+            { ref_table = "card.joker_display_values", ref_value = "chips", retrigger_type = "mult" }
+        },
+        text_config = { colour = G.C.CHIPS },
+        reminder_text = {
+            { text = "(" },
+            { ref_table = "card.joker_display_values", ref_value = "localized_text", colour = G.C.DARK_EDITION  },
+            { text = ")" },
+        },
+        calc_function = function(card)
+            local chips = 0
+            local text, _, scoring_hand = JokerDisplay.evaluate_hand()
+            if text ~= 'Unknown' then
+                for _, scoring_card in pairs(scoring_hand) do
+                    if scoring_card.edition then
+                        chips = chips +
+                            card.ability.extra.chips *
+                            JokerDisplay.calculate_card_triggers(scoring_card, scoring_hand)
+                    end
+                end
+            end
+            card.joker_display_values.chips = chips
+            card.joker_display_values.localized_text = localize("k_edition")
+        end
+}
+
+jd_def["j_qualatro_haltmann"] = { -- Haltmann's Bill
+}
+
+jd_def["j_qualatro_ride_the_raft"] = { -- Ride the Raft
+        text = {
+            { text = "+" },
+            { ref_table = "card.ability.extra", ref_value = "chips", retrigger_type = "mult" }
+        },
+        text_config = { colour = G.C.CHIPS },
+}
+
+jd_def["j_qualatro_jokex_lost_media"] = { -- Lost Media
+    text = {{
+        border_nodes = {{
+            text = "X"
+        }, {
+            ref_table = "card.ability.extra",
+            ref_value = "xmult",
+            retrigger_type = "exp"
+        }}
+    }},
+}
+
+jd_def["j_qualatro_king_for_eternity"] = { -- King for Eternity
+        reminder_text = {
+            { text = "(" },
+            { ref_table = "card.joker_display_values", ref_value = "count",          colour = G.C.ORANGE },
+            { text = "x" },
+            { ref_table = "card.joker_display_values", ref_value = "localized_text", colour = G.C.DARK_EDITION },
+            { text = ")" },
+        },
+        calc_function = function(card)
+            local count = 0
+            if G.jokers then
+                for _, joker_card in ipairs(G.jokers.cards) do
+                    if joker_card.edition then
+                        count = count + 1
+                    end
+                end
+            end
+            card.joker_display_values.count = count
+            card.joker_display_values.localized_text = localize("k_edition")
+        end,
+        mod_function = function(card, mod_joker)
+            return { x_mult = (card.edition and mod_joker.ability.extra.x_mult ^ JokerDisplay.calculate_joker_triggers(mod_joker) or nil) }
+        end
+}
+
+jd_def["j_qualatro_galaxia"] = { -- Galaxia
+    text = {{
+        border_nodes = {{
+            text = "X"
+        }, {
+            ref_table = "card.ability",
+            ref_value = "x_mult",
+            retrigger_type = "exp"
+        }}
+    }},
+}
+
+jd_def["j_qualatro_smashup"] = { -- SmashUp!
+        text = {
+            { text = "+" },
+            { ref_table = "card.ability", ref_value = "mult", retrigger_type = "mult" }
+        },
+        text_config = { colour = G.C.MULT },
+}
+
+jd_def["j_qualatro_othello_world"] = { -- Othello World
+    text = {{
+        border_nodes = {{
+            text = "X"
+        }, {
+            ref_table = "card.joker_display_values",
+            ref_value = "xmult",
+            retrigger_type = "exp"
+        }}
+    }},
+        calc_function = function(card)
+			local mult = 1
+			if G.GAME and G.GAME.blind and G.GAME.blind.mult > 1 then
+				mult = G.GAME.blind.mult
+			end
+            card.joker_display_values.xmult = mult
+        end
+}    
+
+jd_def["j_qualatro_onetwo_jump"] = { -- 1, 2, Joker!
+        text = {
+            {
+                border_nodes = {
+                    { text = "X" },
+                    { ref_table = "card.joker_display_values", ref_value = "x_mult", retrigger_type = "exp" }
+                }
+            }
+        },
+        reminder_text = {
+            { text = "(" },
+            { ref_table = "card.joker_display_values", ref_value = "localized_text" },
+            { text = ",2)" }
+        },
+        calc_function = function(card)
+            local count = 0
+            local text, _, scoring_hand = JokerDisplay.evaluate_hand()
+            if text ~= 'Unknown' then
+                for _, scoring_card in pairs(scoring_hand) do
+                    if scoring_card:get_id() and scoring_card:get_id() == 14 or scoring_card:get_id() == 2 then
+                        count = count +
+                            JokerDisplay.calculate_card_triggers(scoring_card, scoring_hand)
+                    end
+                end
+            end
+            card.joker_display_values.x_mult = card.ability.extra.xmult ^ count
+            card.joker_display_values.localized_text = localize("k_aces")
+        end
+}
+
+jd_def["j_qualatro_gegagedigedagedago"] = { -- Gegagedigedagedago
+    extra = {{{
+        text = "("
+    }, {
+        ref_table = "card.joker_display_values",
+        ref_value = "odds"
+    }, {
+        text = ")"
+    }}},
+    extra_config = {
+        colour = G.C.GREEN,
+        scale = 0.3
+    },
+    calc_function = function(card)
+        local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'gegagedigedagedadie')
+        card.joker_display_values.odds = localize {
+            type = 'variable',
+            key = "jdis_odds",
+            vars = {numerator, denominator}
+        }
+    end
+}
+
+jd_def["j_qualatro_nico_nico"] = { -- Nico Nico
+}
+
+jd_def["j_qualatro_poke_party"] = { -- Poké Party (FIGURE OUT HOW TO USE CUSTOM FUNCTION VALUE)
+--[[         text = {
+            { text = "+" },
+            { ref_table = "joker_display_values", ref_value = "chips", retrigger_type = "mult" }
+        },
+        text_config = { colour = G.C.CHIPS },
+        calc_function = function(card)
+            local jokerusage = #G.GAME.poke_party_joker_usage 
+            card.joker_display_values.chips = card.ability.extra.chips_mod * jokerusage
+        end           ]]          
+}
+
+jd_def["j_qualatro_reverb"] = { -- Reverberation (NEEDS FORMATTING WORK)
+--[[     extra = {{{
+        text = "("
+    }, {
+        ref_table = "card.joker_display_values",
+        ref_value = "odds5"
+    }, {
+        text = ")"
+    }},
+    {{
+        text = "("
+    }, {
+        ref_table = "card.joker_display_values",
+        ref_value = "odds4"
+    }, {
+        text = ")"
+    }},
+    {{
+        text = "("
+    }, {
+        ref_table = "card.joker_display_values",
+        ref_value = "odds3"
+    }, {
+        text = ")"
+    }},
+    {{
+        text = "("
+    }, {
+        ref_table = "card.joker_display_values",
+        ref_value = "odds2"
+    }, {
+        text = ")"
+    }},
+    {{
+        text = "("
+    }, {
+        ref_table = "card.joker_display_values",
+        ref_value = "odds1"
+    }, {
+        text = ")"
+    }}
+},
+    extra_config = {
+        colour = G.C.GREEN
+    },
+    calc_function = function(card)
+        local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.base_odds, 'reverb')
+        card.joker_display_values.odds1 = localize {
+            type = 'variable',
+            key = "jdis_odds",
+            vars = {numerator, denominator}
+        }
+        card.joker_display_values.odds2 = localize {
+            type = 'variable',
+            key = "jdis_odds",
+            vars = {numerator ^ 2, denominator ^ 2}
+        }        
+        card.joker_display_values.odds3 = localize {
+            type = 'variable',
+            key = "jdis_odds",
+            vars = {numerator ^ 3, denominator ^ 3}
+        }
+        card.joker_display_values.odds4 = localize {
+            type = 'variable',
+            key = "jdis_odds",
+            vars = {numerator ^ 4, denominator ^ 4}
+        }        
+        card.joker_display_values.odds5 = localize {
+            type = 'variable',
+            key = "jdis_odds",
+            vars = {numerator ^ 5, denominator ^ 5}
+        }
+    end,
+    style_function = function(card, text, reminder_text, extra)
+        if text and text.children[1] then
+            text.children[1].config.scale = 0.3
+    end
+        if text and text.children[2] then
+            text.children[2].config.scale = 0.25
+    end
+        if text and text.children[3] then
+            text.children[3].config.scale = 0.2
+    end
+        if text and text.children[4] then
+            text.children[4].config.scale = 0.15
+    end
+        if text and text.children[5] then
+            text.children[5].config.scale = 0.1
+    end                
+        return false
+    end     ]]
+}
+
+jd_def["j_qualatro_gadget_room"] = { -- Gadget Room
+}
+
+jd_def["j_qualatro_missingno"] = { -- MissingNo. (HELP)
+}
+
+jd_def["j_qualatro_crazy_bus"] = { -- Crazy Bus
+        text = {
+            { text = "+" },
+            { ref_table = "card.ability", ref_value = "mult", retrigger_type = "mult" }
+        },
+        text_config = { colour = G.C.MULT },
+        reminder_text = {{
+            text = "(3,4)"
+        }},        
 }
